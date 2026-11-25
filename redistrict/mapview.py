@@ -5,7 +5,7 @@ from __future__ import annotations
 import html
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
-from .pipeline import select_boundary_set
+from .pipeline import find_jurisdiction_geometry, select_boundary_set
 
 DISTRICT_COLORS = ["#dbeafe", "#dcfce7", "#fef3c7", "#fae8ff", "#ffe4e6", "#cffafe"]
 DISTRICT_STROKES = ["#2563eb", "#16a34a", "#d97706", "#9333ea", "#e11d48", "#0891b2"]
@@ -37,11 +37,21 @@ def render_svg(
     width: int = 860,
     height: int = 620,
     title: Optional[str] = None,
+    coverage_audit: Optional[Dict[str, Any]] = None,
 ) -> str:
     version, districts = select_boundary_set(data, boundary_version)
     addresses = data.get("addresses", [])
+    jurisdiction_geom = find_jurisdiction_geometry(data, boundary_version)
+    uncovered_geom = None
+    if coverage_audit:
+        g = coverage_audit.get("uncovered_geometry")
+        if isinstance(g, dict) and g.get("coordinates"):
+            uncovered_geom = g
     all_geoms = [d.get("geometry") for d in districts if isinstance(d, dict)]
     all_geoms += [a.get("geometry") for a in addresses if isinstance(a, dict) and a.get("geometry")]
+    for extra in (jurisdiction_geom, uncovered_geom):
+        if isinstance(extra, dict):
+            all_geoms.append(extra)
     pts: List[Tuple[float, float]] = []
     for g in all_geoms:
         if isinstance(g, dict):
@@ -82,6 +92,8 @@ def render_svg(
     parts: List[str] = []
     esc = html.escape
     map_title = title or f"Candidate attribution map · boundary {version}"
+    if coverage_audit and coverage_audit.get("coverage_complete") is False:
+        map_title += " · COVERAGE INCOMPLETE"
     parts.append(
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" '
         f'viewBox="0 0 {width} {height}" role="img" aria-label="{esc(map_title)}">'
@@ -91,6 +103,29 @@ def render_svg(
         f'<text x="20" y="30" font-family="sans-serif" font-size="18" font-weight="700" '
         f'fill="#0f172a">{esc(map_title)}</text>'
     )
+
+    # Jurisdiction outline as an underlay frame.
+    if isinstance(jurisdiction_geom, dict):
+        jtype = jurisdiction_geom.get("type")
+        jpolys: List[List[Any]] = []
+        if jtype == "Polygon":
+            jpolys = [jurisdiction_geom.get("coordinates", [])]
+        elif jtype == "MultiPolygon":
+            jpolys = jurisdiction_geom.get("coordinates", [])
+        for poly in jpolys:
+            if not poly:
+                continue
+            parts.append(
+                f'<polygon points="{points_string(poly[0])}" fill="#f1f5f9" '
+                f'fill-opacity="0.35" stroke="#0f172a" stroke-width="3" '
+                f'stroke-dasharray="10 5"/>'
+            )
+            for hole in poly[1:]:
+                parts.append(
+                    f'<polygon points="{points_string(hole)}" fill="#ffffff" '
+                    f'fill-opacity="0.9" stroke="#0f172a" stroke-width="1.4" '
+                    f'stroke-dasharray="4 3"/>'
+                )
 
     # District polygons.
     for i, d in enumerate(districts):
@@ -130,6 +165,23 @@ def render_svg(
             )
         except Exception:
             pass
+
+    # Uncovered jurisdiction gaps on top of the district layer (they do not
+    # overlap district interiors by construction).
+    if isinstance(uncovered_geom, dict):
+        upolys: List[List[Any]] = []
+        if uncovered_geom.get("type") == "Polygon":
+            upolys = [uncovered_geom.get("coordinates", [])]
+        elif uncovered_geom.get("type") == "MultiPolygon":
+            upolys = uncovered_geom.get("coordinates", [])
+        for poly in upolys:
+            if not poly:
+                continue
+            parts.append(
+                f'<polygon points="{points_string(poly[0])}" fill="#ef4444" '
+                f'fill-opacity="0.5" stroke="#b91c1c" stroke-width="2" '
+                f'stroke-dasharray="6 3"/>'
+            )
 
     # First pass: uncertainty ranges so points and labels stay on top.
     for a in addresses:
@@ -196,6 +248,10 @@ def render_svg(
         ("#93c5fd", "new district"),
         ("#94a3b8", "pending marker*"),
     ]
+    if isinstance(jurisdiction_geom, dict):
+        legend.append(("#0f172a", "jurisdiction"))
+    if isinstance(uncovered_geom, dict):
+        legend.append(("#ef4444", "uncovered gap"))
     cursor = 34
     for color, label in legend:
         parts.append(f'<rect x="{cursor}" y="{ly-11}" width="13" height="13" fill="{color}" fill-opacity="0.8" stroke="#334155" stroke-width="0.6"/>')

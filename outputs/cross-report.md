@@ -6,6 +6,7 @@
 - 输入摘要：`1abec2d6aab16631fa635d80d9fd3ef1857ec760237e3b52d2c2af9933d52fc0`
 - 几何摘要：`ebdd6c634d1d6f21f4c424b9429f4ac8a9c605b22d443d3c01c532ee9cfb1dbd`
 - 控制摘要：`e5c20497760fe2860ed1082cd03747737a2347fbba95d2bc9d74ef179ccf5ac3`
+- 辖区覆盖审计：未审计（未提供辖区范围）
 - 原发布版：`PUB-2020-OLD`（只读，SHA-256 `f177ce52ae8afee11587fa8e9aab38f1dac300f1628f1e0afe67cc5bf164ec8c`）；本报告是新的重述产物。
 - 小地图：[`cross-map.svg`](./cross-map.svg)
 
@@ -41,7 +42,12 @@
 | `K_BC_4` | `B`, `C` | 4 |
 | `K_CD_3` | `C`, `D` | 3 |
 
-## 3. 各新区可证计数上下界及全局见证
+## 3. 辖区覆盖审计
+
+- 未提供该边界版的辖区范围（`jurisdiction`），本次未做覆盖审计。
+- 在输入中为该边界版提供 `jurisdiction` 几何即可启用覆盖闸门。
+
+## 4. 各新区可证计数上下界及全局见证
 
 > 上下界来自对全部合法分配的精确优化。每个界都附完整分配；不得把不同区的独立极值自行拼接。
 
@@ -115,7 +121,7 @@ District extrema are proven separately. A stitched vector is accepted only if th
 - 所有区下界直接拼接 `{"A": 2, "B": 1, "C": 1, "D": 0}`：**不是合法分配（拒收该拼接）**
 - 所有区上界直接拼接 `{"A": 4, "B": 3, "C": 3, "D": 2}`：**不是合法分配（拒收该拼接）**
 
-## 4. 地址级确定性
+## 5. 地址级确定性
 
 只有在所有合法分配中候选新区唯一时才写作“确定”。
 
@@ -130,7 +136,7 @@ District extrema are proven separately. A stitched vector is accepted only if th
 | `U07_AC_range` | `A`, `C` | `A`, `C` | ambiguous | — |
 | `M08_explicit_BC` | `B`, `C` | `B`, `C` | ambiguous | — |
 
-## 5. 与原发布版/可比发布数的重述差异
+## 6. 与原发布版/可比发布数的重述差异
 
 差异字段同时给出两个方向，避免符号歧义。
 
@@ -139,7 +145,7 @@ District extrema are proven separately. A stitched vector is accepted only if th
 | `PUB_A_2020` | 3 | 2 | 4 | -1 / +1 | +1 / -1 | 是（有见证） |
 | `PUB_NORTH_AB` | 5 | 5 | 5 | +0 / +0 | +0 / +0 | 是（有见证） |
 
-## 6. “平均摊”诊断（非证明计数）
+## 7. “平均摊”诊断（非证明计数）
 
 Fractional averaging is not used for proven bounds and must not be published as an address count.
 
@@ -150,7 +156,7 @@ Fractional averaging is not used for proven bounds and must not be published as 
 | `C` | 2.000 | 2.000 | [1, 3] |
 | `D` | 1.500 | 1.500 | [0, 2] |
 
-## 7. 独立复核
+## 8. 独立复核
 
 ```bash
 /usr/bin/python3 -I /workspace/redistrict/cli.py verify --input /workspace/examples/cross_controls_demo.json --result /workspace/outputs/cross-result.json --published /workspace/examples/published_release_2020.json

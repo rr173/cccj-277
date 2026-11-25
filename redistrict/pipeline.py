@@ -9,10 +9,13 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from .geometry import (
     GeometryError,
+    geometry_area,
+    geometry_to_geojson,
     intersection_area,
     parse_geometry,
     point_interior,
     is_on_boundary,
+    uncovered_geometry,
     validate_polygonal_geometry,
 )
 from .solver import (
@@ -27,8 +30,8 @@ from .solver import (
     verify_assignment,
 )
 
-SCHEMA_VERSION = "redistrict-result/1.0"
-TOOL_VERSION = "1.0.0"
+SCHEMA_VERSION = "redistrict-result/1.1"
+TOOL_VERSION = "1.1.0"
 
 
 class InputValidationError(ValueError):
@@ -57,9 +60,9 @@ def _as_nonneg_int(x: Any, path: str, errors: List[str]) -> Optional[int]:
     return int(x)
 
 
-def select_boundary_set(
+def select_boundary_set_full(
     data: Dict[str, Any], requested_version: Optional[str]
-) -> Tuple[str, List[Dict[str, Any]]]:
+) -> Tuple[str, List[Dict[str, Any]], Dict[str, Any]]:
     if "boundary_sets" in data:
         sets = data["boundary_sets"]
         if not isinstance(sets, list) or not sets:
@@ -96,7 +99,14 @@ def select_boundary_set(
     districts = selected.get("districts")
     if not isinstance(districts, list) or not districts:
         raise InputValidationError([f"boundary {version!r}: districts must be a nonempty array"])
-    return str(version), districts
+    return str(version), districts, selected
+
+
+def select_boundary_set(
+    data: Dict[str, Any], requested_version: Optional[str]
+) -> Tuple[str, List[Dict[str, Any]]]:
+    version, districts, _ = select_boundary_set_full(data, requested_version)
+    return version, districts
 
 
 def _priority_key(i: int, district: Dict[str, Any], policy: str) -> Tuple[int, float]:
@@ -165,6 +175,252 @@ def build_district_index(
     if overlaps:
         raise InputValidationError(overlaps)
     return ids, districts, []
+
+
+def _select_jurisdiction(
+    data: Dict[str, Any],
+    selected_set: Dict[str, Any],
+    boundary_version: str,
+    tol: float,
+) -> Optional[Dict[str, Any]]:
+    """Jurisdiction scope for the selected boundary version, or None.
+
+    The jurisdiction may be carried inside the selected boundary set (per
+    version) or at the top level of the input; the set-level entry wins.
+    """
+    raw = None
+    if isinstance(selected_set, dict):
+        raw = selected_set.get("jurisdiction")
+    if raw is None:
+        raw = data.get("jurisdiction")
+    if raw is None:
+        return None
+    if not isinstance(raw, dict):
+        raise InputValidationError(["jurisdiction must be an object with id/geometry"])
+    errors: List[str] = []
+    jid = raw.get("id", "jurisdiction")
+    if not isinstance(jid, str) or not jid:
+        errors.append("jurisdiction.id must be a nonempty string")
+        jid = "jurisdiction"
+    jversion = raw.get("boundary_version", boundary_version)
+    if jversion != boundary_version:
+        errors.append(
+            f"jurisdiction {jid!r}: boundary_version {jversion!r} does not match "
+            f"selected boundary version {boundary_version!r}"
+        )
+    geom = None
+    try:
+        geom = parse_geometry(raw.get("geometry"), f"jurisdiction[{jid}].geometry")
+        if geom["type"] not in {"Polygon", "MultiPolygon"}:
+            raise GeometryError(
+                f"jurisdiction[{jid}].geometry: must be Polygon or MultiPolygon"
+            )
+        validate_polygonal_geometry(geom, f"jurisdiction[{jid}].geometry", tol=tol)
+    except GeometryError as exc:
+        errors.append(str(exc))
+    if errors:
+        raise InputValidationError(errors)
+    return {"id": jid, "geometry": raw.get("geometry"), "_geom": geom}
+
+
+def find_jurisdiction_geometry(
+    data: Dict[str, Any], requested_version: Optional[str]
+) -> Optional[Dict[str, Any]]:
+    """Raw jurisdiction GeoJSON for the selected boundary set (map rendering)."""
+    try:
+        _, _, selected = select_boundary_set_full(data, requested_version)
+    except InputValidationError:
+        return None
+    raw = selected.get("jurisdiction") if isinstance(selected, dict) else None
+    if raw is None:
+        raw = data.get("jurisdiction")
+    if isinstance(raw, dict) and isinstance(raw.get("geometry"), dict):
+        return raw["geometry"]
+    return None
+
+
+COVERAGE_SUPPRESSED_SECTIONS = [
+    "count_bounds",
+    "witnesses",
+    "joint_extrema_check",
+    "determinations",
+    "restatement_differences",
+    "naive_average_diagnostic",
+]
+
+
+def run_coverage_audit(
+    jurisdiction: Dict[str, Any],
+    district_ids: Sequence[str],
+    districts: Dict[str, Dict[str, Any]],
+    boundary_version: str,
+    tol: float,
+    area_eps: float,
+) -> Dict[str, Any]:
+    """Audit whether the new district polygons completely cover the jurisdiction.
+
+    The uncovered area is computed two independent ways and cross-checked:
+
+    * ``jurisdiction_area - covered_area`` via shoelace area and pairwise
+      positive-area intersections (districts are already validated as free of
+      positive-area overlap, so the intersections sum exactly);
+    * the area of the exact slab-decomposition geometry returned by
+      :func:`geometry.uncovered_geometry`.
+
+    If the two disagree beyond a numerical tolerance, or the geometry cannot
+    be built, the audit status is ``error`` and the version is treated as not
+    publishable (the safe side of the gate).
+    """
+    jur_geom = jurisdiction["_geom"]
+    district_geoms = [districts[d]["_geom"] for d in district_ids]
+    jur_area = geometry_area(jur_geom)
+    covered = 0.0
+    for g in district_geoms:
+        covered += intersection_area(jur_geom, g, tol=tol)
+    district_total = sum(geometry_area(g) for g in district_geoms)
+    uncovered_exact = max(0.0, jur_area - covered)
+    outside = max(0.0, district_total - covered)
+
+    geometry_error = None
+    decomp = None
+    try:
+        decomp = uncovered_geometry(jur_geom, district_geoms, tol=tol)
+    except GeometryError as exc:
+        geometry_error = str(exc)
+
+    cross_tol = 1e-9 * max(1.0, jur_area) + area_eps
+    if decomp is not None:
+        geom_area = decomp["area"]
+        sliver_area = decomp["sliver_area"]
+        cross_diff = abs((geom_area + sliver_area) - uncovered_exact)
+        cross_ok = cross_diff <= cross_tol
+    else:
+        geom_area = None
+        sliver_area = None
+        cross_diff = None
+        cross_ok = False
+
+    if geometry_error is not None or not cross_ok:
+        status = "error"
+    elif uncovered_exact > area_eps:
+        status = "incomplete"
+    else:
+        status = "complete"
+    complete = status == "complete"
+
+    parts = []
+    if decomp is not None:
+        for p in decomp["parts"]:
+            parts.append({
+                "index": p["index"],
+                "area": round(p["area"], 12),
+                "y_range": p["y_range"],
+                "x_range_at_lower_y": p["x_range_at_lower_y"],
+                "x_range_at_upper_y": p["x_range_at_upper_y"],
+            })
+
+    return {
+        "status": status,
+        "coverage_complete": complete,
+        "jurisdiction_id": jurisdiction["id"],
+        "boundary_version": boundary_version,
+        "jurisdiction_area": round(jur_area, 12),
+        "covered_area": round(covered, 12),
+        "coverage_ratio": round(covered / jur_area, 12) if jur_area > 0 else None,
+        "uncovered_area": round(uncovered_exact, 12),
+        "positive_area_epsilon": area_eps,
+        "uncovered_geometry_area": round(geom_area, 12) if geom_area is not None else None,
+        "uncovered_sliver_area_excluded": (
+            round(sliver_area, 12) if sliver_area is not None else None
+        ),
+        "uncovered_part_count": len(parts),
+        "uncovered_geometry": (
+            geometry_to_geojson(decomp["geometry"])
+            if decomp is not None and parts else None
+        ),
+        "uncovered_geometry_note": (
+            "Exact horizontal-slab decomposition; the union of parts is the uncovered "
+            "set jurisdiction \\ union(districts). Parts only share edges, never area."
+        ),
+        "uncovered_parts": parts,
+        "district_area_outside_jurisdiction": round(outside, 12),
+        "area_cross_check": {
+            "jurisdiction_minus_covered_area": round(uncovered_exact, 12),
+            "uncovered_geometry_plus_sliver_area": (
+                round(geom_area + sliver_area, 12) if decomp is not None else None
+            ),
+            "absolute_difference": round(cross_diff, 12) if cross_diff is not None else None,
+            "tolerance": cross_tol,
+            "within_tolerance": cross_ok,
+        },
+        "geometry_error": geometry_error,
+        "gate": {
+            "proven_counts_publishable": complete,
+            "restatement_publishable": complete,
+            "suppressed_sections": [] if complete else list(COVERAGE_SUPPRESSED_SECTIONS),
+            "reason": (
+                "jurisdiction fully covered; address attribution and count results "
+                "are unaffected"
+                if complete else
+                "uncovered jurisdiction area exists (or coverage cannot be proven); "
+                "proven address counts and restatement conclusions are withheld for "
+                "this boundary version"
+            ),
+        },
+        "rule": (
+            "New district polygons must completely cover the jurisdiction of the "
+            "selected boundary version. Uncovered area above positive_area_epsilon "
+            "marks coverage incomplete and blocks publication of proven counts and "
+            "restatement conclusions. Published release data is read-only and is "
+            "never modified."
+        ),
+    }
+
+
+def _reclassify_pending_for_coverage(
+    data: Dict[str, Any],
+    pending: List[Dict[str, Any]],
+    jur_geom: Dict[str, Any],
+    tol: float,
+    area_eps: float,
+) -> None:
+    """Re-mark pending addresses that fall inside uncovered jurisdiction area.
+
+    Such addresses are a boundary coverage gap, not missing addresses.  Only
+    runs when coverage is incomplete; rows are mutated in place (they are
+    shared with address_candidates).
+    """
+    raw_by_id = {
+        a.get("id"): a for a in data.get("addresses", []) if isinstance(a, dict)
+    }
+    for row in pending:
+        aid = row["address_id"]
+        raw = raw_by_id.get(aid) or {}
+        geom_raw = raw.get("geometry")
+        if not isinstance(geom_raw, dict):
+            continue  # missing-location pending rows keep their original reason
+        geom = parse_geometry(geom_raw, f"coverage-reclassify[{aid}]")
+        if geom["type"] == "Point":
+            if point_interior(jur_geom, geom["point"], tol=tol):
+                row["pre_coverage_reason"] = row.get("reason")
+                row["reason"] = "inside_uncovered_jurisdiction_area"
+                row["coverage_note"] = (
+                    "Point lies inside the jurisdiction but outside every new "
+                    "district; this is a boundary coverage gap, not a missing address."
+                )
+        else:
+            area = intersection_area(geom, jur_geom, tol=tol)
+            if area > area_eps:
+                row["pre_coverage_reason"] = row.get("reason")
+                row["reason"] = "overlaps_uncovered_jurisdiction_area"
+                evidence = dict(row.get("spatial_evidence") or {})
+                evidence["uncovered_jurisdiction_overlap_area"] = round(area, 12)
+                row["spatial_evidence"] = evidence
+                row["coverage_note"] = (
+                    "Uncertainty range overlaps jurisdiction area not covered by "
+                    "any new district; this is a boundary coverage gap, not a "
+                    "missing address."
+                )
 
 
 def parse_controls(
@@ -591,13 +847,37 @@ def run_analysis(
     area_eps = float(data.get("positive_area_epsilon", options.get("positive_area_epsilon", 1e-9)))
     enum_limit = int(options.get("conflict_enumeration_limit", data.get("conflict_enumeration_limit", 1000)))
 
-    boundary_version, district_rows = select_boundary_set(data, requested_version)
+    boundary_version, district_rows, selected_set = select_boundary_set_full(data, requested_version)
     # Attach area epsilon before overlap check.
     for d in district_rows:
         if isinstance(d, dict):
             d["_area_epsilon"] = area_eps
     district_ids, districts, _ = build_district_index(district_rows, tol)
     controls, public_controls, ignored_controls = parse_controls(data, district_ids, boundary_version)
+
+    jurisdiction_record = _select_jurisdiction(data, selected_set, boundary_version, tol)
+    if jurisdiction_record is not None:
+        coverage_audit = run_coverage_audit(
+            jurisdiction_record, district_ids, districts, boundary_version, tol, area_eps
+        )
+    else:
+        coverage_audit = {
+            "status": "not_audited",
+            "coverage_complete": None,
+            "reason": (
+                "No jurisdiction geometry supplied for the selected boundary "
+                "version; coverage was not audited."
+            ),
+            "gate": {
+                "proven_counts_publishable": True,
+                "restatement_publishable": True,
+                "suppressed_sections": [],
+                "reason": (
+                    "coverage audit not performed; supply jurisdiction for the "
+                    "selected boundary version to enable the coverage gate"
+                ),
+            },
+        }
 
     candidate_rows, pending, eligible_ids, domains = construct_candidates(
         data, district_ids, districts, tol, area_eps
@@ -620,6 +900,14 @@ def run_analysis(
         "input_canonical_sha256": canonical_digest(data),
         "geometry_sha256": canonical_digest(geometry_binding),
         "controls_sha256": canonical_digest(control_binding),
+        "jurisdiction_sha256": (
+            canonical_digest({
+                "boundary_version": boundary_version,
+                "jurisdiction_id": jurisdiction_record["id"],
+                "geometry": jurisdiction_record["geometry"],
+            })
+            if jurisdiction_record is not None else None
+        ),
         "published_sha256": sha256_bytes(published_bytes) if published_bytes is not None else None,
         "original_publication_modified": False,
     }
@@ -643,6 +931,7 @@ def run_analysis(
         "published_release": publication_info,
         "boundary_version": boundary_version,
         "district_ids": district_ids,
+        "coverage_audit": coverage_audit,
         "address_count_total": len([a for a in data.get("addresses", []) if isinstance(a, dict) and a.get("id")]),
         "eligible_address_count": len(eligible_ids),
         "pending_review_count": len(pending),
@@ -656,6 +945,50 @@ def run_analysis(
         "ignored_controls_other_versions": ignored_controls,
         "naive_average_diagnostic": naive_apportionment(candidate_rows, district_ids),
     }
+
+    if coverage_audit["status"] in {"incomplete", "error"}:
+        # Coverage gate: the new districts do not provably cover the
+        # jurisdiction.  Withhold every count-bearing and restatement section
+        # for this boundary version, and re-mark pending addresses that fall
+        # inside the uncovered area so they are not mistaken for missing
+        # addresses.  The published release file is never modified.
+        _reclassify_pending_for_coverage(
+            data, pending, jurisdiction_record["_geom"], tol, area_eps
+        )
+        base_result.update({
+            "status": "coverage_incomplete",
+            "count_bounds": [],
+            "witnesses": [],
+            "determinations": [],
+            "joint_extrema_check": {},
+            "restatement_differences": [],
+            "naive_average_diagnostic": {
+                "status": "suppressed_because_coverage_incomplete",
+                "warning": (
+                    "Coverage of the jurisdiction is incomplete; no counts, "
+                    "witnesses or fractional diagnostics are published for this "
+                    "boundary version."
+                ),
+            },
+            "publication_suppressed": {
+                "reason": (
+                    "jurisdiction coverage is incomplete; proven address counts "
+                    "and restatement conclusions must not be published for this "
+                    "boundary version"
+                ),
+                "withheld_sections": list(COVERAGE_SUPPRESSED_SECTIONS),
+                "no_proven_counts_emitted": True,
+                "pending_inside_uncovered_area": [
+                    p["address_id"] for p in pending
+                    if p.get("reason") in {
+                        "inside_uncovered_jurisdiction_area",
+                        "overlaps_uncovered_jurisdiction_area",
+                    }
+                ],
+                "original_publication_modified": False,
+            },
+        })
+        return base_result
 
     first = solve_feasible(problem)
     if not first.feasible:

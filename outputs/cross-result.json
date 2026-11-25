@@ -1,15 +1,16 @@
 {
-  "schema_version": "redistrict-result/1.0",
-  "tool_version": "1.0.0",
+  "schema_version": "redistrict-result/1.1",
+  "tool_version": "1.1.0",
   "status": "feasible",
   "version_binding": {
-    "schema_version": "redistrict-result/1.0",
-    "tool_version": "1.0.0",
+    "schema_version": "redistrict-result/1.1",
+    "tool_version": "1.1.0",
     "boundary_version": "BV-2026.1",
     "input_sha256": "1abec2d6aab16631fa635d80d9fd3ef1857ec760237e3b52d2c2af9933d52fc0",
     "input_canonical_sha256": "1fd6e98b02928dfdafaf3b4637542913fece289414faa95a6d2a2cfbf2a55d74",
     "geometry_sha256": "ebdd6c634d1d6f21f4c424b9429f4ac8a9c605b22d443d3c01c532ee9cfb1dbd",
     "controls_sha256": "e5c20497760fe2860ed1082cd03747737a2347fbba95d2bc9d74ef179ccf5ac3",
+    "jurisdiction_sha256": null,
     "published_sha256": "f177ce52ae8afee11587fa8e9aab38f1dac300f1628f1e0afe67cc5bf164ec8c",
     "original_publication_modified": false
   },
@@ -28,6 +29,17 @@
     "C",
     "D"
   ],
+  "coverage_audit": {
+    "status": "not_audited",
+    "coverage_complete": null,
+    "reason": "No jurisdiction geometry supplied for the selected boundary version; coverage was not audited.",
+    "gate": {
+      "proven_counts_publishable": true,
+      "restatement_publishable": true,
+      "suppressed_sections": [],
+      "reason": "coverage audit not performed; supply jurisdiction for the selected boundary version to enable the coverage gate"
+    }
+  },
   "address_count_total": 10,
   "eligible_address_count": 8,
   "pending_review_count": 2,

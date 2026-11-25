@@ -369,3 +369,234 @@ def geometries_positive_overlap(
 ) -> float:
     area = intersection_area(g1, g2)
     return area if area > area_epsilon else 0.0
+
+
+# ---------------------------------------------------------------------------
+# Coverage audit geometry: jurisdiction minus union(districts)
+# ---------------------------------------------------------------------------
+
+
+def ring_signed_area(ring: Ring) -> float:
+    """Signed shoelace area of a ring (positive for counterclockwise order)."""
+    total = 0.0
+    n = len(ring)
+    for i in range(n):
+        x1, y1 = ring[i]
+        x2, y2 = ring[(i + 1) % n]
+        total += x1 * y2 - x2 * y1
+    return total / 2.0
+
+
+def geometry_area(geom: PolygonalGeometry) -> float:
+    """Area of polygonal geometry: exterior rings minus hole rings."""
+    total = 0.0
+    for poly in geom["polygons"]:
+        exterior = abs(ring_signed_area(poly[0]))
+        holes = sum(abs(ring_signed_area(r)) for r in poly[1:])
+        total += max(0.0, exterior - holes)
+    return total
+
+
+def geometry_to_geojson(geom: PolygonalGeometry) -> Dict[str, Any]:
+    """Convert internal polygonal geometry to a GeoJSON-style dict (closed rings)."""
+    coords = []
+    for poly in geom["polygons"]:
+        rings = []
+        for ring in poly:
+            pts = [[float(x), float(y)] for x, y in ring]
+            pts.append([float(ring[0][0]), float(ring[0][1])])
+            rings.append(pts)
+        coords.append(rings)
+    if geom["type"] == "Polygon":
+        return {"type": "Polygon", "coordinates": coords[0] if coords else []}
+    return {"type": "MultiPolygon", "coordinates": coords}
+
+
+def _edge_x_at_y(edge: Tuple[Point, Point], y: float) -> float:
+    (a, b) = edge
+    if b[1] == a[1]:
+        # Horizontal edges never produce cross-section endpoints; defensive only.
+        return (a[0] + b[0]) / 2.0
+    return a[0] + (y - a[1]) * (b[0] - a[0]) / (b[1] - a[1])
+
+
+def _cross_section_spans(
+    geom: PolygonalGeometry, y: float
+) -> List[Tuple[Tuple[float, Tuple[Point, Point]], Tuple[float, Tuple[Point, Point]]]]:
+    """Like ``_cross_section_intervals`` but keeps the producing edge per endpoint."""
+    spans: List[Tuple[float, Tuple[Point, Point]]] = []
+    for edge in iter_edges(geom):
+        a, b = edge
+        if (a[1] > y) != (b[1] > y):
+            spans.append((_edge_x_at_y(edge, y), edge))
+    spans.sort(key=lambda s: s[0])
+    if len(spans) % 2:
+        raise GeometryError(f"odd horizontal crossing count {len(spans)} at y={y!r}")
+    out = []
+    for i in range(0, len(spans), 2):
+        if spans[i + 1][0] > spans[i][0]:
+            out.append((spans[i], spans[i + 1]))
+    return out
+
+
+def _merge_tracked_intervals(intervals, merge_eps: float):
+    """Union of tracked ((x, edge), (x, edge)) intervals; touching ones merge."""
+    ordered = sorted(intervals, key=lambda iv: (iv[0][0], iv[1][0]))
+    merged = []
+    for iv in ordered:
+        if merged and iv[0][0] <= merged[-1][1][0] + merge_eps:
+            if iv[1][0] > merged[-1][1][0]:
+                merged[-1] = (merged[-1][0], iv[1])
+        else:
+            merged.append(iv)
+    return merged
+
+
+def _subtract_tracked_intervals(base, blocks):
+    """Subtract sorted disjoint tracked block intervals from base intervals."""
+    segments = list(base)
+    for blk in blocks:
+        bl, br = blk
+        nxt = []
+        for seg in segments:
+            sl, sr = seg
+            if br[0] <= sl[0] or bl[0] >= sr[0]:
+                nxt.append(seg)
+                continue
+            if bl[0] > sl[0]:
+                # Left remainder ends on the block's left edge.
+                nxt.append((sl, bl))
+            if br[0] < sr[0]:
+                # Right remainder starts on the block's right edge.
+                nxt.append((br, sr))
+        segments = nxt
+    return segments
+
+
+def _trapezoid_ring(
+    xl_lo: float, xr_lo: float, xl_hi: float, xr_hi: float,
+    y_lo: float, y_hi: float, snap: float,
+):
+    """Build the exact slab trapezoid ring (CCW) and its area.
+
+    Returns (ring, area); ring is None when the slice has zero width at both
+    slab boundaries.  Widths may degenerate to a point at one boundary,
+    producing a triangle.
+    """
+    w_lo = xr_lo - xl_lo
+    w_hi = xr_hi - xl_hi
+    if w_lo < -snap or w_hi < -snap:
+        raise GeometryError(
+            "uncovered interval endpoints cross inside a slab; event set incomplete"
+        )
+    if w_lo <= snap and w_hi <= snap:
+        return None, 0.0
+    area = (max(w_lo, 0.0) + max(w_hi, 0.0)) / 2.0 * (y_hi - y_lo)
+    if w_lo <= snap:
+        xm = (xl_lo + xr_lo) / 2.0
+        ring = [(xm, y_lo), (xr_hi, y_hi), (xl_hi, y_hi)]
+    elif w_hi <= snap:
+        xm = (xl_hi + xr_hi) / 2.0
+        ring = [(xl_lo, y_lo), (xr_lo, y_lo), (xm, y_hi)]
+    else:
+        ring = [(xl_lo, y_lo), (xr_lo, y_lo), (xr_hi, y_hi), (xl_hi, y_hi)]
+    return ring, area
+
+
+def uncovered_geometry(
+    jurisdiction: PolygonalGeometry,
+    districts: Sequence[PolygonalGeometry],
+    tol: float = 1e-9,
+) -> Dict[str, Any]:
+    """Exact uncovered set ``jurisdiction \\ union(districts)`` as a MultiPolygon.
+
+    Horizontal slab decomposition: between consecutive event heights (every
+    vertex height plus every proper edge-crossing height) each boundary edge is
+    a straight segment, so uncovered cross-section endpoints move linearly and
+    every uncovered slice is exactly a trapezoid.  The union of the returned
+    parts is the exact uncovered set; parts only share edges, never area.
+
+    Precondition: ``districts`` are pairwise free of positive-area overlap
+    (already enforced for target boundary sets by the pipeline).
+
+    Returns a dict with the internal MultiPolygon ``geometry``, its ``area``,
+    the numerically negligible ``sliver_area`` excluded from the geometry, and
+    per-part ``parts`` metadata.
+    """
+    geoms = [jurisdiction] + list(districts)
+    edge_lists = [list(iter_edges(g)) for g in geoms]
+    ys: List[float] = []
+    xs: List[float] = []
+    for edges in edge_lists:
+        for a, b in edges:
+            ys.extend((a[1], b[1]))
+            xs.extend((a[0], b[0]))
+    # Event heights: proper crossings between any two distinct geometries.
+    # District/district proper crossings cannot occur for validated boundary
+    # sets, but collecting all pairs keeps the decomposition correct even for
+    # ad-hoc inputs.
+    for i in range(len(edge_lists)):
+        for j in range(i + 1, len(edge_lists)):
+            for e1 in edge_lists[i]:
+                for e2 in edge_lists[j]:
+                    if proper_intersect(e1[0], e1[1], e2[0], e2[1], tol):
+                        p = _proper_intersection_point(e1[0], e1[1], e2[0], e2[1])
+                        if p is not None:
+                            ys.append(p[1])
+    ys = sorted(set(ys))
+    scale = 1.0
+    if xs and ys:
+        scale = max(1.0, max(xs) - min(xs), max(ys) - min(ys))
+    merge_eps = 1e-12 * scale
+    snap = 1e-12 * scale
+    sliver_eps = 1e-12 * scale * scale
+
+    polygons: List[List[Ring]] = []
+    parts: List[Dict[str, Any]] = []
+    kept_area = 0.0
+    sliver_area = 0.0
+    for lo, hi in zip(ys, ys[1:]):
+        height = hi - lo
+        if height <= 1e-14:
+            continue
+        mid = (lo + hi) / 2.0
+        base = _cross_section_spans(jurisdiction, mid)
+        if not base:
+            continue
+        blocks = []
+        for d in districts:
+            blocks.extend(_cross_section_spans(d, mid))
+        blocks = _merge_tracked_intervals(blocks, merge_eps)
+        for iv in base:
+            for (xl, el), (xr, er) in _subtract_tracked_intervals([iv], blocks):
+                xl_lo = _edge_x_at_y(el, lo)
+                xl_hi = _edge_x_at_y(el, hi)
+                xr_lo = _edge_x_at_y(er, lo)
+                xr_hi = _edge_x_at_y(er, hi)
+                ring, area = _trapezoid_ring(
+                    xl_lo, xr_lo, xl_hi, xr_hi, lo, hi, snap
+                )
+                if ring is None:
+                    continue
+                if area <= sliver_eps:
+                    # Numerically negligible slice; disclosed separately and
+                    # kept out of the emitted geometry so every part stays a
+                    # valid non-degenerate ring.
+                    sliver_area += area
+                    continue
+                _validate_ring_shape(ring, "coverage.uncovered", tol)
+                polygons.append([ring])
+                parts.append({
+                    "index": len(parts),
+                    "area": area,
+                    "y_range": [lo, hi],
+                    "x_range_at_lower_y": [xl_lo, xr_lo],
+                    "x_range_at_upper_y": [xl_hi, xr_hi],
+                })
+                kept_area += area
+    return {
+        "geometry": {"type": "MultiPolygon", "polygons": polygons},
+        "area": kept_area,
+        "sliver_area": sliver_area,
+        "parts": parts,
+    }

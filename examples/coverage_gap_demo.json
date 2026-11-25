@@ -1,0 +1,111 @@
+{
+  "schema_version": "redistrict-input/1.0",
+  "dataset_id": "coverage-gap-demo",
+  "boundary_version": "BV-2026.2",
+  "boundary_priority_policy": "input_order",
+  "geometry_tolerance": 1e-9,
+  "positive_area_epsilon": 1e-9,
+  "jurisdiction": {
+    "id": "JUR-DEMO-2",
+    "boundary_version": "BV-2026.2",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]]
+    }
+  },
+  "districts": [
+    {
+      "id": "A",
+      "name": "西北新区",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0, 5], [5, 5], [5, 10], [0, 10], [0, 5]]]
+      }
+    },
+    {
+      "id": "B",
+      "name": "东北新区",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5, 5], [10, 5], [10, 10], [5, 10], [5, 5]]]
+      }
+    },
+    {
+      "id": "C",
+      "name": "西南新区",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0, 0], [5, 0], [5, 5], [0, 5], [0, 0]]]
+      }
+    },
+    {
+      "id": "D",
+      "name": "东南新区（缺一条幅）",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5, 0], [8, 0], [8, 5], [5, 5], [5, 0]]]
+      }
+    }
+  ],
+  "addresses": [
+    {
+      "id": "P01_in_A",
+      "geometry": {"type": "Point", "coordinates": [2, 8]}
+    },
+    {
+      "id": "P02_in_gap",
+      "geometry": {"type": "Point", "coordinates": [9, 2.5]}
+    },
+    {
+      "id": "U03_range_gap",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[8.5, 1], [9.5, 1], [9.5, 2], [8.5, 2], [8.5, 1]]]
+      }
+    },
+    {
+      "id": "U04_range_CD",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[4, 1], [6, 1], [6, 2], [4, 2], [4, 1]]]
+      }
+    },
+    {
+      "id": "M05_explicit_AB",
+      "location_status": "missing",
+      "candidate_districts": ["A", "B"]
+    },
+    {
+      "id": "M06_missing_pending",
+      "location_status": "missing",
+      "label_xy": [-1.2, 10.8]
+    },
+    {
+      "id": "P07_outside_jurisdiction",
+      "geometry": {"type": "Point", "coordinates": [12, 12]}
+    }
+  ],
+  "controls": [
+    {
+      "id": "K_AB_2",
+      "boundary_version": "BV-2026.2",
+      "districts": ["A", "B"],
+      "total": 2
+    },
+    {
+      "id": "K_CD_1",
+      "boundary_version": "BV-2026.2",
+      "districts": ["C", "D"],
+      "total": 1
+    }
+  ],
+  "restatement_comparisons": [
+    {
+      "id": "PUB_A_2020",
+      "label": "原发布版 A 可比片",
+      "district_id": "A",
+      "published_release_id": "PUB-2020-OLD",
+      "published_count": 1
+    }
+  ]
+}

@@ -26,7 +26,12 @@ if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
 from redistrict.mapview import render_svg  # noqa: E402
-from redistrict.pipeline import InputValidationError, run_analysis, sha256_bytes  # noqa: E402
+from redistrict.pipeline import (  # noqa: E402
+    InputValidationError,
+    canonical_digest,
+    run_analysis,
+    sha256_bytes,
+)
 from redistrict.report import render_markdown  # noqa: E402
 from redistrict.solver import Control, Problem, verify_assignment  # noqa: E402
 
@@ -82,7 +87,10 @@ def cmd_run(args: argparse.Namespace) -> int:
     if map_path is None and args.report:
         map_path = os.path.splitext(args.report)[0] + "-map.svg"
     if map_path:
-        svg = render_svg(data, result.get("boundary_version"))
+        svg = render_svg(
+            data, result.get("boundary_version"),
+            coverage_audit=result.get("coverage_audit"),
+        )
         _write_text(map_path, svg)
 
     if args.report:
@@ -112,6 +120,12 @@ def cmd_run(args: argparse.Namespace) -> int:
         "eligible_address_count": result["eligible_address_count"],
         "pending_review_count": result["pending_review_count"],
     }
+    cov = result.get("coverage_audit") or {}
+    summary["coverage_audit"] = {
+        "status": cov.get("status"),
+        "coverage_complete": cov.get("coverage_complete"),
+        "uncovered_area": cov.get("uncovered_area"),
+    }
     if result["status"] == "feasible":
         summary["bounds"] = {
             b["district_id"]: [b["lower"], b["upper"]] for b in result["count_bounds"]
@@ -119,6 +133,8 @@ def cmd_run(args: argparse.Namespace) -> int:
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     if result["status"] == "infeasible":
         return 3
+    if result["status"] == "coverage_incomplete":
+        return 5
     return 0
 
 
@@ -202,6 +218,22 @@ def cmd_verify(args: argparse.Namespace) -> int:
     )
     if fresh["status"] != result.get("status"):
         errors.append(f"status changed on rerun: {fresh['status']} != {result.get('status')}")
+
+    # Coverage audit must reproduce exactly, and a coverage-incomplete result
+    # must not carry any withheld count/restatement sections.
+    if canonical_digest(fresh.get("coverage_audit")) != canonical_digest(
+        result.get("coverage_audit")
+    ):
+        errors.append("coverage audit differs from exact rerun")
+    old_cov = result.get("coverage_audit") or {}
+    if result.get("status") == "coverage_incomplete":
+        for key in ("count_bounds", "witnesses", "determinations", "restatement_differences"):
+            if result.get(key):
+                errors.append(f"coverage-incomplete result must not publish {key}")
+        if old_cov.get("coverage_complete") is not False:
+            errors.append("coverage_incomplete status requires coverage_complete=false")
+    if old_cov.get("coverage_complete") is False and result.get("status") == "feasible":
+        errors.append("coverage incomplete but proven counts were published")
 
     fresh_candidates = {
         r["address_id"]: (r["status"], tuple(r["candidate_districts"]), r.get("candidate_source"))

@@ -1,0 +1,82 @@
+{
+  "schema_version": "redistrict-input/1.0",
+  "dataset_id": "coverage-complete-demo",
+  "boundary_version": "BV-2026.3",
+  "boundary_priority_policy": "input_order",
+  "geometry_tolerance": 1e-9,
+  "positive_area_epsilon": 1e-9,
+  "jurisdiction": {
+    "id": "JUR-DEMO-3",
+    "boundary_version": "BV-2026.3",
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]]
+    }
+  },
+  "districts": [
+    {
+      "id": "A",
+      "name": "西北新区",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0, 5], [5, 5], [5, 10], [0, 10], [0, 5]]]
+      }
+    },
+    {
+      "id": "B",
+      "name": "东北新区",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5, 5], [10, 5], [10, 10], [5, 10], [5, 5]]]
+      }
+    },
+    {
+      "id": "C",
+      "name": "西南新区",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0, 0], [5, 0], [5, 5], [0, 5], [0, 0]]]
+      }
+    },
+    {
+      "id": "D",
+      "name": "东南新区",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5, 0], [10, 0], [10, 5], [5, 5], [5, 0]]]
+      }
+    }
+  ],
+  "addresses": [
+    {
+      "id": "P01_in_A",
+      "geometry": {"type": "Point", "coordinates": [2, 8]}
+    },
+    {
+      "id": "P02_in_D",
+      "geometry": {"type": "Point", "coordinates": [7, 3]}
+    },
+    {
+      "id": "M03_explicit_BC",
+      "location_status": "missing",
+      "candidate_districts": ["B", "C"]
+    }
+  ],
+  "controls": [
+    {
+      "id": "K_BC_1",
+      "boundary_version": "BV-2026.3",
+      "districts": ["B", "C"],
+      "total": 1
+    }
+  ],
+  "restatement_comparisons": [
+    {
+      "id": "PUB_A_2020",
+      "label": "原发布版 A 可比片",
+      "district_id": "A",
+      "published_release_id": "PUB-2020-OLD",
+      "published_count": 1
+    }
+  ]
+}

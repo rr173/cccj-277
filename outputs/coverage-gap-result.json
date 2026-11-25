@@ -1,0 +1,333 @@
+{
+  "schema_version": "redistrict-result/1.1",
+  "tool_version": "1.1.0",
+  "status": "coverage_incomplete",
+  "version_binding": {
+    "schema_version": "redistrict-result/1.1",
+    "tool_version": "1.1.0",
+    "boundary_version": "BV-2026.2",
+    "input_sha256": "00f1aa7e1e0d6e821f86f0a5e078f44ec3355f1f29e46c44fa420997c2c57e5d",
+    "input_canonical_sha256": "2bc8fa2d4a30f8fbafb690e0db2901516e699d6c7e55d293bad4e7da3575a2ef",
+    "geometry_sha256": "f2dde9d440baf02a6b361043e23cea336896fd23e75a3be3af967c3e0ef12525",
+    "controls_sha256": "affb19d012c2a890bb163e16f192fbd21d3334145f8522812a4d59a4998d0aca",
+    "jurisdiction_sha256": "91a2d0ffc8390fbe0ea64dd397bf2faa41b8d5e850237479d92704444584dc30",
+    "published_sha256": "f177ce52ae8afee11587fa8e9aab38f1dac300f1628f1e0afe67cc5bf164ec8c",
+    "original_publication_modified": false
+  },
+  "published_release": {
+    "release_id": "PUB-2020-OLD",
+    "release_status": "original_published_immutable",
+    "boundary_version": "BV-2020",
+    "published_at": "2021-01-20",
+    "sha256": "f177ce52ae8afee11587fa8e9aab38f1dac300f1628f1e0afe67cc5bf164ec8c",
+    "write_policy": "read_only_input; restatement is written to a separate output"
+  },
+  "boundary_version": "BV-2026.2",
+  "district_ids": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "coverage_audit": {
+    "status": "incomplete",
+    "coverage_complete": false,
+    "jurisdiction_id": "JUR-DEMO-2",
+    "boundary_version": "BV-2026.2",
+    "jurisdiction_area": 100.0,
+    "covered_area": 90.0,
+    "coverage_ratio": 0.9,
+    "uncovered_area": 10.0,
+    "positive_area_epsilon": 1e-09,
+    "uncovered_geometry_area": 10.0,
+    "uncovered_sliver_area_excluded": 0.0,
+    "uncovered_part_count": 1,
+    "uncovered_geometry": {
+      "type": "MultiPolygon",
+      "coordinates": [
+        [
+          [
+            [
+              8.0,
+              0.0
+            ],
+            [
+              10.0,
+              0.0
+            ],
+            [
+              10.0,
+              5.0
+            ],
+            [
+              8.0,
+              5.0
+            ],
+            [
+              8.0,
+              0.0
+            ]
+          ]
+        ]
+      ]
+    },
+    "uncovered_geometry_note": "Exact horizontal-slab decomposition; the union of parts is the uncovered set jurisdiction \\ union(districts). Parts only share edges, never area.",
+    "uncovered_parts": [
+      {
+        "index": 0,
+        "area": 10.0,
+        "y_range": [
+          0.0,
+          5.0
+        ],
+        "x_range_at_lower_y": [
+          8.0,
+          10.0
+        ],
+        "x_range_at_upper_y": [
+          8.0,
+          10.0
+        ]
+      }
+    ],
+    "district_area_outside_jurisdiction": 0.0,
+    "area_cross_check": {
+      "jurisdiction_minus_covered_area": 10.0,
+      "uncovered_geometry_plus_sliver_area": 10.0,
+      "absolute_difference": 0.0,
+      "tolerance": 1.01e-07,
+      "within_tolerance": true
+    },
+    "geometry_error": null,
+    "gate": {
+      "proven_counts_publishable": false,
+      "restatement_publishable": false,
+      "suppressed_sections": [
+        "count_bounds",
+        "witnesses",
+        "joint_extrema_check",
+        "determinations",
+        "restatement_differences",
+        "naive_average_diagnostic"
+      ],
+      "reason": "uncovered jurisdiction area exists (or coverage cannot be proven); proven address counts and restatement conclusions are withheld for this boundary version"
+    },
+    "rule": "New district polygons must completely cover the jurisdiction of the selected boundary version. Uncovered area above positive_area_epsilon marks coverage incomplete and blocks publication of proven counts and restatement conclusions. Published release data is read-only and is never modified."
+  },
+  "address_count_total": 7,
+  "eligible_address_count": 3,
+  "pending_review_count": 4,
+  "pending_review": [
+    {
+      "address_id": "P02_in_gap",
+      "input_index": 1,
+      "location_kind": "Point",
+      "status": "pending_review",
+      "candidate_source": "point_no_containment_or_touch",
+      "candidate_districts": [],
+      "reason": "inside_uncovered_jurisdiction_area",
+      "spatial_evidence": {
+        "boundary_touch_districts": [],
+        "interior_districts": [],
+        "decision": "point outside all target districts"
+      },
+      "pre_coverage_reason": "point_outside_or_not_touching_any_district",
+      "coverage_note": "Point lies inside the jurisdiction but outside every new district; this is a boundary coverage gap, not a missing address."
+    },
+    {
+      "address_id": "U03_range_gap",
+      "input_index": 2,
+      "location_kind": "Polygon",
+      "status": "pending_review",
+      "candidate_source": "positive_area_intersection",
+      "candidate_districts": [],
+      "spatial_evidence": {
+        "intersection_areas": {},
+        "positive_area_epsilon": 1e-09,
+        "rule": "boundary-only/zero-area contact is not a candidate",
+        "uncovered_jurisdiction_overlap_area": 1.0
+      },
+      "reason": "overlaps_uncovered_jurisdiction_area",
+      "pre_coverage_reason": "no_positive_area_intersection",
+      "coverage_note": "Uncertainty range overlaps jurisdiction area not covered by any new district; this is a boundary coverage gap, not a missing address."
+    },
+    {
+      "address_id": "M06_missing_pending",
+      "input_index": 5,
+      "location_kind": "missing",
+      "status": "pending_review",
+      "candidate_districts": [],
+      "reason": "missing_location_without_explicit_candidate_set",
+      "rule": "No old code or areal average may supply candidates."
+    },
+    {
+      "address_id": "P07_outside_jurisdiction",
+      "input_index": 6,
+      "location_kind": "Point",
+      "status": "pending_review",
+      "candidate_source": "point_no_containment_or_touch",
+      "candidate_districts": [],
+      "reason": "point_outside_or_not_touching_any_district",
+      "spatial_evidence": {
+        "boundary_touch_districts": [],
+        "interior_districts": [],
+        "decision": "point outside all target districts"
+      }
+    }
+  ],
+  "address_candidates": [
+    {
+      "address_id": "P01_in_A",
+      "input_index": 0,
+      "location_kind": "Point",
+      "status": "eligible",
+      "candidate_source": "point_interior_containment",
+      "candidate_districts": [
+        "A"
+      ],
+      "reason": null,
+      "spatial_evidence": {
+        "boundary_touch_districts": [],
+        "interior_districts": [
+          "A"
+        ],
+        "decision": "strict interior"
+      }
+    },
+    {
+      "address_id": "P02_in_gap",
+      "input_index": 1,
+      "location_kind": "Point",
+      "status": "pending_review",
+      "candidate_source": "point_no_containment_or_touch",
+      "candidate_districts": [],
+      "reason": "inside_uncovered_jurisdiction_area",
+      "spatial_evidence": {
+        "boundary_touch_districts": [],
+        "interior_districts": [],
+        "decision": "point outside all target districts"
+      },
+      "pre_coverage_reason": "point_outside_or_not_touching_any_district",
+      "coverage_note": "Point lies inside the jurisdiction but outside every new district; this is a boundary coverage gap, not a missing address."
+    },
+    {
+      "address_id": "U03_range_gap",
+      "input_index": 2,
+      "location_kind": "Polygon",
+      "status": "pending_review",
+      "candidate_source": "positive_area_intersection",
+      "candidate_districts": [],
+      "spatial_evidence": {
+        "intersection_areas": {},
+        "positive_area_epsilon": 1e-09,
+        "rule": "boundary-only/zero-area contact is not a candidate",
+        "uncovered_jurisdiction_overlap_area": 1.0
+      },
+      "reason": "overlaps_uncovered_jurisdiction_area",
+      "pre_coverage_reason": "no_positive_area_intersection",
+      "coverage_note": "Uncertainty range overlaps jurisdiction area not covered by any new district; this is a boundary coverage gap, not a missing address."
+    },
+    {
+      "address_id": "U04_range_CD",
+      "input_index": 3,
+      "location_kind": "Polygon",
+      "status": "eligible",
+      "candidate_source": "positive_area_intersection",
+      "candidate_districts": [
+        "C",
+        "D"
+      ],
+      "spatial_evidence": {
+        "intersection_areas": {
+          "C": 1.0,
+          "D": 1.0
+        },
+        "positive_area_epsilon": 1e-09,
+        "rule": "boundary-only/zero-area contact is not a candidate"
+      }
+    },
+    {
+      "address_id": "M05_explicit_AB",
+      "input_index": 4,
+      "location_kind": "missing",
+      "status": "eligible",
+      "candidate_source": "explicit_missing_location",
+      "candidate_districts": [
+        "A",
+        "B"
+      ],
+      "reason": null
+    },
+    {
+      "address_id": "M06_missing_pending",
+      "input_index": 5,
+      "location_kind": "missing",
+      "status": "pending_review",
+      "candidate_districts": [],
+      "reason": "missing_location_without_explicit_candidate_set",
+      "rule": "No old code or areal average may supply candidates."
+    },
+    {
+      "address_id": "P07_outside_jurisdiction",
+      "input_index": 6,
+      "location_kind": "Point",
+      "status": "pending_review",
+      "candidate_source": "point_no_containment_or_touch",
+      "candidate_districts": [],
+      "reason": "point_outside_or_not_touching_any_district",
+      "spatial_evidence": {
+        "boundary_touch_districts": [],
+        "interior_districts": [],
+        "decision": "point outside all target districts"
+      }
+    }
+  ],
+  "controls": [
+    {
+      "control_id": "K_AB_2",
+      "boundary_version": "BV-2026.2",
+      "districts": [
+        "A",
+        "B"
+      ],
+      "total": 2
+    },
+    {
+      "control_id": "K_CD_1",
+      "boundary_version": "BV-2026.2",
+      "districts": [
+        "C",
+        "D"
+      ],
+      "total": 1
+    }
+  ],
+  "control_population_basis": "Each control.total is enforced on eligible participating addresses only. pending_review addresses are excluded from proven counts and witnesses.",
+  "ignored_controls_other_versions": [],
+  "naive_average_diagnostic": {
+    "status": "suppressed_because_coverage_incomplete",
+    "warning": "Coverage of the jurisdiction is incomplete; no counts, witnesses or fractional diagnostics are published for this boundary version."
+  },
+  "count_bounds": [],
+  "witnesses": [],
+  "determinations": [],
+  "joint_extrema_check": {},
+  "restatement_differences": [],
+  "publication_suppressed": {
+    "reason": "jurisdiction coverage is incomplete; proven address counts and restatement conclusions must not be published for this boundary version",
+    "withheld_sections": [
+      "count_bounds",
+      "witnesses",
+      "joint_extrema_check",
+      "determinations",
+      "restatement_differences",
+      "naive_average_diagnostic"
+    ],
+    "no_proven_counts_emitted": true,
+    "pending_inside_uncovered_area": [
+      "P02_in_gap",
+      "U03_range_gap"
+    ],
+    "original_publication_modified": false
+  }
+}

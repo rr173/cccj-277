@@ -6,6 +6,7 @@
 - 输入摘要：`7d66b8daaaaa65a94e46e8db9a87c476941486e40c1dac27546489b01b5c4498`
 - 几何摘要：`2931efcad5f2be596691ec7007deb965cace5115d303e8814b3786cb8009b630`
 - 控制摘要：`1f0c460afe25fbef06a80d9d17566dc18d1c2f2bdc95e9d8069aabd0764e9159`
+- 辖区覆盖审计：未审计（未提供辖区范围）
 - 原发布版：只读，未改写；本报告是新的重述产物。
 - 小地图：[`conflict-map.svg`](./conflict-map.svg)
 
@@ -29,7 +30,12 @@
 | `K_BC_eq_1` | `B`, `C` | 1 |
 | `K_AC_eq_2` | `A`, `C` | 2 |
 
-## 3. 整体无解：可复核冲突
+## 3. 辖区覆盖审计
+
+- 未提供该边界版的辖区范围（`jurisdiction`），本次未做覆盖审计。
+- 在输入中为该边界版提供 `jurisdiction` 几何即可启用覆盖闸门。
+
+## 4. 整体无解：可复核冲突
 
 - 求解器结论：`initial propagation conflict`
 - 最小冲突控制核：`K_AB_eq_2`, `K_BC_eq_1`, `K_AC_eq_2`

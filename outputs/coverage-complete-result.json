@@ -1,0 +1,866 @@
+{
+  "schema_version": "redistrict-result/1.1",
+  "tool_version": "1.1.0",
+  "status": "feasible",
+  "version_binding": {
+    "schema_version": "redistrict-result/1.1",
+    "tool_version": "1.1.0",
+    "boundary_version": "BV-2026.3",
+    "input_sha256": "daff2e5f9d0f064372c1ffacd1f209c1ac7635486ed38ff04ad47cefc398b6fb",
+    "input_canonical_sha256": "22dc4bceb48a9260a8b9cf07f6a108fc4bc1e68285702f57cb7b140df3f91ab8",
+    "geometry_sha256": "1b3439ad0d050adc0b2e8d2d8e52836201aa355996f5707060d5b71863f54a8c",
+    "controls_sha256": "b3af39482d265ca20bc8dc45f56e52690c055c70ca92647059e87fb5805a1fbc",
+    "jurisdiction_sha256": "1a65d721e00c05cea40c62ca24c3bc2d863e96f20d8b2962cc3fbe3263683a75",
+    "published_sha256": "f177ce52ae8afee11587fa8e9aab38f1dac300f1628f1e0afe67cc5bf164ec8c",
+    "original_publication_modified": false
+  },
+  "published_release": {
+    "release_id": "PUB-2020-OLD",
+    "release_status": "original_published_immutable",
+    "boundary_version": "BV-2020",
+    "published_at": "2021-01-20",
+    "sha256": "f177ce52ae8afee11587fa8e9aab38f1dac300f1628f1e0afe67cc5bf164ec8c",
+    "write_policy": "read_only_input; restatement is written to a separate output"
+  },
+  "boundary_version": "BV-2026.3",
+  "district_ids": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "coverage_audit": {
+    "status": "complete",
+    "coverage_complete": true,
+    "jurisdiction_id": "JUR-DEMO-3",
+    "boundary_version": "BV-2026.3",
+    "jurisdiction_area": 100.0,
+    "covered_area": 100.0,
+    "coverage_ratio": 1.0,
+    "uncovered_area": 0.0,
+    "positive_area_epsilon": 1e-09,
+    "uncovered_geometry_area": 0.0,
+    "uncovered_sliver_area_excluded": 0.0,
+    "uncovered_part_count": 0,
+    "uncovered_geometry": null,
+    "uncovered_geometry_note": "Exact horizontal-slab decomposition; the union of parts is the uncovered set jurisdiction \\ union(districts). Parts only share edges, never area.",
+    "uncovered_parts": [],
+    "district_area_outside_jurisdiction": 0.0,
+    "area_cross_check": {
+      "jurisdiction_minus_covered_area": 0.0,
+      "uncovered_geometry_plus_sliver_area": 0.0,
+      "absolute_difference": 0.0,
+      "tolerance": 1.01e-07,
+      "within_tolerance": true
+    },
+    "geometry_error": null,
+    "gate": {
+      "proven_counts_publishable": true,
+      "restatement_publishable": true,
+      "suppressed_sections": [],
+      "reason": "jurisdiction fully covered; address attribution and count results are unaffected"
+    },
+    "rule": "New district polygons must completely cover the jurisdiction of the selected boundary version. Uncovered area above positive_area_epsilon marks coverage incomplete and blocks publication of proven counts and restatement conclusions. Published release data is read-only and is never modified."
+  },
+  "address_count_total": 3,
+  "eligible_address_count": 3,
+  "pending_review_count": 0,
+  "pending_review": [],
+  "address_candidates": [
+    {
+      "address_id": "P01_in_A",
+      "input_index": 0,
+      "location_kind": "Point",
+      "status": "eligible",
+      "candidate_source": "point_interior_containment",
+      "candidate_districts": [
+        "A"
+      ],
+      "reason": null,
+      "spatial_evidence": {
+        "boundary_touch_districts": [],
+        "interior_districts": [
+          "A"
+        ],
+        "decision": "strict interior"
+      }
+    },
+    {
+      "address_id": "P02_in_D",
+      "input_index": 1,
+      "location_kind": "Point",
+      "status": "eligible",
+      "candidate_source": "point_interior_containment",
+      "candidate_districts": [
+        "D"
+      ],
+      "reason": null,
+      "spatial_evidence": {
+        "boundary_touch_districts": [],
+        "interior_districts": [
+          "D"
+        ],
+        "decision": "strict interior"
+      }
+    },
+    {
+      "address_id": "M03_explicit_BC",
+      "input_index": 2,
+      "location_kind": "missing",
+      "status": "eligible",
+      "candidate_source": "explicit_missing_location",
+      "candidate_districts": [
+        "B",
+        "C"
+      ],
+      "reason": null
+    }
+  ],
+  "controls": [
+    {
+      "control_id": "K_BC_1",
+      "boundary_version": "BV-2026.3",
+      "districts": [
+        "B",
+        "C"
+      ],
+      "total": 1
+    }
+  ],
+  "control_population_basis": "Each control.total is enforced on eligible participating addresses only. pending_review addresses are excluded from proven counts and witnesses.",
+  "ignored_controls_other_versions": [],
+  "naive_average_diagnostic": {
+    "status": "diagnostic_not_legal_assignment",
+    "warning": "Fractional averaging is not used for proven bounds and must not be published as an address count.",
+    "equal_split_district_equivalents": {
+      "A": 1.0,
+      "B": 0.5,
+      "C": 0.5,
+      "D": 1.0
+    },
+    "area_weighted_district_equivalents": {
+      "A": 1.0,
+      "B": 0.5,
+      "C": 0.5,
+      "D": 1.0
+    },
+    "address_weights": [
+      {
+        "address_id": "P01_in_A",
+        "weights": {
+          "A": 1.0
+        },
+        "basis": "equal_fallback"
+      },
+      {
+        "address_id": "P02_in_D",
+        "weights": {
+          "D": 1.0
+        },
+        "basis": "equal_fallback"
+      },
+      {
+        "address_id": "M03_explicit_BC",
+        "weights": {
+          "B": 0.5,
+          "C": 0.5
+        },
+        "basis": "equal_fallback"
+      }
+    ],
+    "district_bound_comparison": {
+      "A": {
+        "area_weighted_value": 1.0,
+        "area_weighted_minus_lower": 0.0,
+        "area_weighted_minus_upper": 0.0,
+        "area_weighted_within_integer_interval_span": true,
+        "equal_split_value": 1.0,
+        "equal_split_minus_lower": 0.0,
+        "equal_split_minus_upper": 0.0,
+        "warning": "A fractional value inside [lower, upper] is still not an assignment or proof."
+      },
+      "B": {
+        "area_weighted_value": 0.5,
+        "area_weighted_minus_lower": 0.5,
+        "area_weighted_minus_upper": -0.5,
+        "area_weighted_within_integer_interval_span": true,
+        "equal_split_value": 0.5,
+        "equal_split_minus_lower": 0.5,
+        "equal_split_minus_upper": -0.5,
+        "warning": "A fractional value inside [lower, upper] is still not an assignment or proof."
+      },
+      "C": {
+        "area_weighted_value": 0.5,
+        "area_weighted_minus_lower": 0.5,
+        "area_weighted_minus_upper": -0.5,
+        "area_weighted_within_integer_interval_span": true,
+        "equal_split_value": 0.5,
+        "equal_split_minus_lower": 0.5,
+        "equal_split_minus_upper": -0.5,
+        "warning": "A fractional value inside [lower, upper] is still not an assignment or proof."
+      },
+      "D": {
+        "area_weighted_value": 1.0,
+        "area_weighted_minus_lower": 0.0,
+        "area_weighted_minus_upper": 0.0,
+        "area_weighted_within_integer_interval_span": true,
+        "equal_split_value": 1.0,
+        "equal_split_minus_lower": 0.0,
+        "equal_split_minus_upper": 0.0,
+        "warning": "A fractional value inside [lower, upper] is still not an assignment or proof."
+      }
+    }
+  },
+  "count_bounds": [
+    {
+      "district_id": "A",
+      "lower": 1,
+      "upper": 1,
+      "fixed": true,
+      "lower_witness_id": "witness:A:lower",
+      "upper_witness_id": "witness:A:upper",
+      "lower_witness": {
+        "witness_id": "witness:A:lower",
+        "kind": "district_lower",
+        "district_id": "A",
+        "group_districts": null,
+        "value": 1,
+        "assignment": {
+          "M03_explicit_BC": "B",
+          "P01_in_A": "A",
+          "P02_in_D": "D"
+        },
+        "district_counts": {
+          "A": 1,
+          "B": 1,
+          "C": 0,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_BC_1",
+            "expected": 1,
+            "observed": 1,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "upper_witness": {
+        "witness_id": "witness:A:upper",
+        "kind": "district_upper",
+        "district_id": "A",
+        "group_districts": null,
+        "value": 1,
+        "assignment": {
+          "M03_explicit_BC": "B",
+          "P01_in_A": "A",
+          "P02_in_D": "D"
+        },
+        "district_counts": {
+          "A": 1,
+          "B": 1,
+          "C": 0,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_BC_1",
+            "expected": 1,
+            "observed": 1,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "solver_nodes": {
+        "lower": 3,
+        "upper": 3
+      }
+    },
+    {
+      "district_id": "B",
+      "lower": 0,
+      "upper": 1,
+      "fixed": false,
+      "lower_witness_id": "witness:B:lower",
+      "upper_witness_id": "witness:B:upper",
+      "lower_witness": {
+        "witness_id": "witness:B:lower",
+        "kind": "district_lower",
+        "district_id": "B",
+        "group_districts": null,
+        "value": 0,
+        "assignment": {
+          "M03_explicit_BC": "C",
+          "P01_in_A": "A",
+          "P02_in_D": "D"
+        },
+        "district_counts": {
+          "A": 1,
+          "B": 0,
+          "C": 1,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_BC_1",
+            "expected": 1,
+            "observed": 1,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "upper_witness": {
+        "witness_id": "witness:B:upper",
+        "kind": "district_upper",
+        "district_id": "B",
+        "group_districts": null,
+        "value": 1,
+        "assignment": {
+          "M03_explicit_BC": "B",
+          "P01_in_A": "A",
+          "P02_in_D": "D"
+        },
+        "district_counts": {
+          "A": 1,
+          "B": 1,
+          "C": 0,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_BC_1",
+            "expected": 1,
+            "observed": 1,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "solver_nodes": {
+        "lower": 3,
+        "upper": 3
+      }
+    },
+    {
+      "district_id": "C",
+      "lower": 0,
+      "upper": 1,
+      "fixed": false,
+      "lower_witness_id": "witness:C:lower",
+      "upper_witness_id": "witness:C:upper",
+      "lower_witness": {
+        "witness_id": "witness:C:lower",
+        "kind": "district_lower",
+        "district_id": "C",
+        "group_districts": null,
+        "value": 0,
+        "assignment": {
+          "M03_explicit_BC": "B",
+          "P01_in_A": "A",
+          "P02_in_D": "D"
+        },
+        "district_counts": {
+          "A": 1,
+          "B": 1,
+          "C": 0,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_BC_1",
+            "expected": 1,
+            "observed": 1,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "upper_witness": {
+        "witness_id": "witness:C:upper",
+        "kind": "district_upper",
+        "district_id": "C",
+        "group_districts": null,
+        "value": 1,
+        "assignment": {
+          "M03_explicit_BC": "C",
+          "P01_in_A": "A",
+          "P02_in_D": "D"
+        },
+        "district_counts": {
+          "A": 1,
+          "B": 0,
+          "C": 1,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_BC_1",
+            "expected": 1,
+            "observed": 1,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "solver_nodes": {
+        "lower": 3,
+        "upper": 3
+      }
+    },
+    {
+      "district_id": "D",
+      "lower": 1,
+      "upper": 1,
+      "fixed": true,
+      "lower_witness_id": "witness:D:lower",
+      "upper_witness_id": "witness:D:upper",
+      "lower_witness": {
+        "witness_id": "witness:D:lower",
+        "kind": "district_lower",
+        "district_id": "D",
+        "group_districts": null,
+        "value": 1,
+        "assignment": {
+          "M03_explicit_BC": "B",
+          "P01_in_A": "A",
+          "P02_in_D": "D"
+        },
+        "district_counts": {
+          "A": 1,
+          "B": 1,
+          "C": 0,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_BC_1",
+            "expected": 1,
+            "observed": 1,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "upper_witness": {
+        "witness_id": "witness:D:upper",
+        "kind": "district_upper",
+        "district_id": "D",
+        "group_districts": null,
+        "value": 1,
+        "assignment": {
+          "M03_explicit_BC": "B",
+          "P01_in_A": "A",
+          "P02_in_D": "D"
+        },
+        "district_counts": {
+          "A": 1,
+          "B": 1,
+          "C": 0,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_BC_1",
+            "expected": 1,
+            "observed": 1,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "solver_nodes": {
+        "lower": 3,
+        "upper": 3
+      }
+    }
+  ],
+  "joint_extrema_check": {
+    "all_district_lower_values": {
+      "values": {
+        "A": 1,
+        "B": 0,
+        "C": 0,
+        "D": 1
+      },
+      "jointly_feasible": false
+    },
+    "all_district_upper_values": {
+      "values": {
+        "A": 1,
+        "B": 1,
+        "C": 1,
+        "D": 1
+      },
+      "jointly_feasible": false
+    },
+    "rule": "District extrema are proven separately. A stitched vector is accepted only if this joint solver check returns a complete witness; otherwise it is not a legal assignment."
+  },
+  "witnesses": [
+    {
+      "witness_id": "witness:A:lower",
+      "kind": "district_lower",
+      "district_id": "A",
+      "group_districts": null,
+      "value": 1,
+      "assignment": {
+        "M03_explicit_BC": "B",
+        "P01_in_A": "A",
+        "P02_in_D": "D"
+      },
+      "district_counts": {
+        "A": 1,
+        "B": 1,
+        "C": 0,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_BC_1",
+          "expected": 1,
+          "observed": 1,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:A:upper",
+      "kind": "district_upper",
+      "district_id": "A",
+      "group_districts": null,
+      "value": 1,
+      "assignment": {
+        "M03_explicit_BC": "B",
+        "P01_in_A": "A",
+        "P02_in_D": "D"
+      },
+      "district_counts": {
+        "A": 1,
+        "B": 1,
+        "C": 0,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_BC_1",
+          "expected": 1,
+          "observed": 1,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:B:lower",
+      "kind": "district_lower",
+      "district_id": "B",
+      "group_districts": null,
+      "value": 0,
+      "assignment": {
+        "M03_explicit_BC": "C",
+        "P01_in_A": "A",
+        "P02_in_D": "D"
+      },
+      "district_counts": {
+        "A": 1,
+        "B": 0,
+        "C": 1,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_BC_1",
+          "expected": 1,
+          "observed": 1,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:B:upper",
+      "kind": "district_upper",
+      "district_id": "B",
+      "group_districts": null,
+      "value": 1,
+      "assignment": {
+        "M03_explicit_BC": "B",
+        "P01_in_A": "A",
+        "P02_in_D": "D"
+      },
+      "district_counts": {
+        "A": 1,
+        "B": 1,
+        "C": 0,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_BC_1",
+          "expected": 1,
+          "observed": 1,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:C:lower",
+      "kind": "district_lower",
+      "district_id": "C",
+      "group_districts": null,
+      "value": 0,
+      "assignment": {
+        "M03_explicit_BC": "B",
+        "P01_in_A": "A",
+        "P02_in_D": "D"
+      },
+      "district_counts": {
+        "A": 1,
+        "B": 1,
+        "C": 0,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_BC_1",
+          "expected": 1,
+          "observed": 1,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:C:upper",
+      "kind": "district_upper",
+      "district_id": "C",
+      "group_districts": null,
+      "value": 1,
+      "assignment": {
+        "M03_explicit_BC": "C",
+        "P01_in_A": "A",
+        "P02_in_D": "D"
+      },
+      "district_counts": {
+        "A": 1,
+        "B": 0,
+        "C": 1,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_BC_1",
+          "expected": 1,
+          "observed": 1,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:D:lower",
+      "kind": "district_lower",
+      "district_id": "D",
+      "group_districts": null,
+      "value": 1,
+      "assignment": {
+        "M03_explicit_BC": "B",
+        "P01_in_A": "A",
+        "P02_in_D": "D"
+      },
+      "district_counts": {
+        "A": 1,
+        "B": 1,
+        "C": 0,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_BC_1",
+          "expected": 1,
+          "observed": 1,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:D:upper",
+      "kind": "district_upper",
+      "district_id": "D",
+      "group_districts": null,
+      "value": 1,
+      "assignment": {
+        "M03_explicit_BC": "B",
+        "P01_in_A": "A",
+        "P02_in_D": "D"
+      },
+      "district_counts": {
+        "A": 1,
+        "B": 1,
+        "C": 0,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_BC_1",
+          "expected": 1,
+          "observed": 1,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:ambiguity:M03_explicit_BC",
+      "kind": "address_alternative",
+      "district_id": "C",
+      "group_districts": null,
+      "value": null,
+      "assignment": {
+        "M03_explicit_BC": "C",
+        "P01_in_A": "A",
+        "P02_in_D": "D"
+      },
+      "district_counts": {
+        "A": 1,
+        "B": 0,
+        "C": 1,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_BC_1",
+          "expected": 1,
+          "observed": 1,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    }
+  ],
+  "determinations": [
+    {
+      "address_id": "P01_in_A",
+      "candidate_districts": [
+        "A"
+      ],
+      "legally_possible_districts": [
+        "A"
+      ],
+      "determination": "deterministic",
+      "assigned_district": "A"
+    },
+    {
+      "address_id": "P02_in_D",
+      "candidate_districts": [
+        "D"
+      ],
+      "legally_possible_districts": [
+        "D"
+      ],
+      "determination": "deterministic",
+      "assigned_district": "D"
+    },
+    {
+      "address_id": "M03_explicit_BC",
+      "candidate_districts": [
+        "B",
+        "C"
+      ],
+      "legally_possible_districts": [
+        "B",
+        "C"
+      ],
+      "determination": "ambiguous",
+      "assigned_district": null,
+      "ambiguity_witness_district": "C",
+      "ambiguity_witness": {
+        "witness_id": "witness:ambiguity:M03_explicit_BC",
+        "kind": "address_alternative",
+        "district_id": "C",
+        "group_districts": null,
+        "value": null,
+        "assignment": {
+          "M03_explicit_BC": "C",
+          "P01_in_A": "A",
+          "P02_in_D": "D"
+        },
+        "district_counts": {
+          "A": 1,
+          "B": 0,
+          "C": 1,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_BC_1",
+            "expected": 1,
+            "observed": 1,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      }
+    }
+  ],
+  "restatement_differences": [
+    {
+      "comparison_id": "PUB_A_2020",
+      "label": "原发布版 A 可比片",
+      "published_release_id": "PUB-2020-OLD",
+      "members": [
+        "A"
+      ],
+      "published_count": 1,
+      "proven_lower": 1,
+      "proven_upper": 1,
+      "restated_minus_published_lower_edge": 0,
+      "restated_minus_published_upper_edge": 0,
+      "published_minus_lower": 0,
+      "published_minus_upper": 0,
+      "published_count_within_outer_bounds": true,
+      "exact_published_value_globally_feasible": true,
+      "exact_value_witness": {
+        "witness_id": "witness:published-exact:PUB_A_2020",
+        "kind": "published_exact_value",
+        "district_id": null,
+        "group_districts": [
+          "A"
+        ],
+        "value": 1,
+        "assignment": {
+          "M03_explicit_BC": "B",
+          "P01_in_A": "A",
+          "P02_in_D": "D"
+        },
+        "district_counts": {
+          "A": 1,
+          "B": 1,
+          "C": 0,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_BC_1",
+            "expected": 1,
+            "observed": 1,
+            "satisfied": true
+          },
+          {
+            "control_id": "__exact_published_PUB_A_2020",
+            "expected": 1,
+            "observed": 1,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      }
+    }
+  ],
+  "global_warning": "Each lower/upper witness is a complete global assignment. Do not combine district-specific lower or upper entries into one vector unless a witness exists for it."
+}

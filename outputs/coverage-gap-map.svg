@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="620" viewBox="0 0 860 620" role="img" aria-label="Candidate attribution map · boundary BV-2026.2 · COVERAGE INCOMPLETE">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="30" font-family="sans-serif" font-size="18" font-weight="700" fill="#0f172a">Candidate attribution map · boundary BV-2026.2 · COVERAGE INCOMPLETE</text>
+<polygon points="104.9,527.1 453.4,527.1 453.4,178.6 104.9,178.6 104.9,527.1" fill="#f1f5f9" fill-opacity="0.35" stroke="#0f172a" stroke-width="3" stroke-dasharray="10 5"/>
+<polygon points="104.9,352.9 279.1,352.9 279.1,178.6 104.9,178.6 104.9,352.9" fill="#dbeafe" fill-opacity="0.72" stroke="#2563eb" stroke-width="2.2"/>
+<text x="192.0" y="265.7" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="800" fill="#2563eb">A</text>
+<polygon points="279.1,352.9 453.4,352.9 453.4,178.6 279.1,178.6 279.1,352.9" fill="#dcfce7" fill-opacity="0.72" stroke="#16a34a" stroke-width="2.2"/>
+<text x="366.3" y="265.7" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="800" fill="#16a34a">B</text>
+<polygon points="104.9,527.1 279.1,527.1 279.1,352.9 104.9,352.9 104.9,527.1" fill="#fef3c7" fill-opacity="0.72" stroke="#d97706" stroke-width="2.2"/>
+<text x="192.0" y="440.0" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="800" fill="#d97706">C</text>
+<polygon points="279.1,527.1 383.7,527.1 383.7,352.9 279.1,352.9 279.1,527.1" fill="#fae8ff" fill-opacity="0.72" stroke="#9333ea" stroke-width="2.2"/>
+<text x="331.4" y="440.0" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="800" fill="#9333ea">D</text>
+<polygon points="383.7,527.1 453.4,527.1 453.4,352.9 383.7,352.9 383.7,527.1" fill="#ef4444" fill-opacity="0.5" stroke="#b91c1c" stroke-width="2" stroke-dasharray="6 3"/>
+<polygon points="401.1,492.3 436.0,492.3 436.0,457.4 401.1,457.4 401.1,492.3" fill="#f97316" fill-opacity="0.22" stroke="#ea580c" stroke-width="2" stroke-dasharray="7 4"/>
+<text x="418.6" y="474.8" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#9a3412" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">U03</text>
+<polygon points="244.3,492.3 314.0,492.3 314.0,457.4 244.3,457.4 244.3,492.3" fill="#f97316" fill-opacity="0.22" stroke="#ea580c" stroke-width="2" stroke-dasharray="7 4"/>
+<text x="279.1" y="474.8" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#9a3412" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">U04</text>
+<circle cx="174.6" cy="248.3" r="5.4" fill="#7c3aed" stroke="#ffffff" stroke-width="2"/>
+<text x="182.6" y="241.3" font-family="sans-serif" font-size="12" font-weight="700" fill="#5b21b6" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">P01</text>
+<circle cx="418.6" cy="440.0" r="5.4" fill="#7c3aed" stroke="#ffffff" stroke-width="2"/>
+<text x="426.6" y="433.0" font-family="sans-serif" font-size="12" font-weight="700" fill="#5b21b6" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">P02</text>
+<rect x="58.1" y="145.7" width="10" height="10" fill="#94a3b8" transform="rotate(45 63.1 150.7)"/>
+<text x="72.1" y="154.7" font-family="sans-serif" font-size="12" font-weight="700" fill="#475569" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">M06*</text>
+<circle cx="523.1" cy="108.9" r="5.4" fill="#7c3aed" stroke="#ffffff" stroke-width="2"/>
+<text x="531.1" y="101.9" font-family="sans-serif" font-size="12" font-weight="700" fill="#5b21b6" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">P07</text>
+<rect x="34" y="581" width="13" height="13" fill="#7c3aed" fill-opacity="0.8" stroke="#334155" stroke-width="0.6"/>
+<text x="53" y="592" font-family="sans-serif" font-size="13" fill="#334155">point</text>
+<rect x="108" y="581" width="13" height="13" fill="#f97316" fill-opacity="0.8" stroke="#334155" stroke-width="0.6"/>
+<text x="127" y="592" font-family="sans-serif" font-size="13" fill="#334155">uncertain range</text>
+<rect x="262" y="581" width="13" height="13" fill="#93c5fd" fill-opacity="0.8" stroke="#334155" stroke-width="0.6"/>
+<text x="281" y="592" font-family="sans-serif" font-size="13" fill="#334155">new district</text>
+<rect x="392" y="581" width="13" height="13" fill="#94a3b8" fill-opacity="0.8" stroke="#334155" stroke-width="0.6"/>
+<text x="411" y="592" font-family="sans-serif" font-size="13" fill="#334155">pending marker*</text>
+<rect x="546" y="581" width="13" height="13" fill="#0f172a" fill-opacity="0.8" stroke="#334155" stroke-width="0.6"/>
+<text x="565" y="592" font-family="sans-serif" font-size="13" fill="#334155">jurisdiction</text>
+<rect x="676" y="581" width="13" height="13" fill="#ef4444" fill-opacity="0.8" stroke="#334155" stroke-width="0.6"/>
+<text x="695" y="592" font-family="sans-serif" font-size="13" fill="#334155">uncovered gap</text>
+</svg>

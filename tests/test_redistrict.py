@@ -13,10 +13,13 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from redistrict.geometry import (  # noqa: E402
+    geometry_area,
     intersection_area,
     parse_geometry,
     point_interior,
     is_on_boundary,
+    uncovered_geometry,
+    validate_polygonal_geometry,
 )
 from redistrict.pipeline import InputValidationError, run_analysis  # noqa: E402
 from redistrict.solver import Control, Problem, optimize_mask, solve_feasible, verify_assignment  # noqa: E402
@@ -214,6 +217,226 @@ class SolverRandomBruteForceTests(unittest.TestCase):
                 yield i
             mask >>= 1
             i += 1
+
+
+class CoverageGeometryTests(unittest.TestCase):
+    def test_uncovered_geometry_with_diagonal_edges(self):
+        # Triangle jurisdiction {0 <= y <= x <= 10}; one square district.
+        jur = parse_geometry({
+            "type": "Polygon",
+            "coordinates": [[[0, 0], [10, 0], [10, 10], [0, 0]]],
+        }, "jur")
+        sq = parse_geometry({
+            "type": "Polygon",
+            "coordinates": [[[0, 0], [5, 0], [5, 5], [0, 5], [0, 0]]],
+        }, "sq")
+        decomp = uncovered_geometry(jur, [sq])
+        # jurisdiction area 50, covered 12.5 (half the square) -> 37.5.
+        self.assertAlmostEqual(decomp["area"], 37.5, places=9)
+        self.assertEqual(len(decomp["parts"]), 2)
+        # The upper slab degenerates to a triangle (3 vertices).
+        sizes = sorted(len(poly[0]) for poly in decomp["geometry"]["polygons"])
+        self.assertEqual(sizes, [3, 4])
+        self.assertAlmostEqual(
+            geometry_area(decomp["geometry"]), decomp["area"], places=9
+        )
+
+    def test_uncovered_geometry_full_cover_is_empty(self):
+        jur = parse_geometry({
+            "type": "Polygon",
+            "coordinates": [[[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]]],
+        }, "jur")
+        left = parse_geometry({
+            "type": "Polygon",
+            "coordinates": [[[0, 0], [5, 0], [5, 10], [0, 10], [0, 0]]],
+        }, "left")
+        right = parse_geometry({
+            "type": "Polygon",
+            "coordinates": [[[5, 0], [10, 0], [10, 10], [5, 10], [5, 0]]],
+        }, "right")
+        decomp = uncovered_geometry(jur, [left, right])
+        self.assertAlmostEqual(decomp["area"], 0.0, places=9)
+        self.assertEqual(decomp["parts"], [])
+
+
+class CoverageAuditTests(unittest.TestCase):
+    def test_gap_demo_suppresses_counts_and_reclassifies_pending(self):
+        data, raw = load_example("coverage_gap_demo.json")
+        result = run_analysis(data, input_bytes=raw)
+        self.assertEqual(result["status"], "coverage_incomplete")
+
+        cov = result["coverage_audit"]
+        self.assertEqual(cov["status"], "incomplete")
+        self.assertFalse(cov["coverage_complete"])
+        self.assertAlmostEqual(cov["jurisdiction_area"], 100.0, places=9)
+        self.assertAlmostEqual(cov["covered_area"], 90.0, places=9)
+        self.assertAlmostEqual(cov["uncovered_area"], 10.0, places=9)
+        self.assertEqual(cov["uncovered_part_count"], 1)
+        self.assertTrue(cov["area_cross_check"]["within_tolerance"])
+        self.assertFalse(cov["gate"]["proven_counts_publishable"])
+        self.assertFalse(cov["gate"]["restatement_publishable"])
+
+        # No proven counts or restatement conclusions are published.
+        self.assertEqual(result["count_bounds"], [])
+        self.assertEqual(result["witnesses"], [])
+        self.assertEqual(result["determinations"], [])
+        self.assertEqual(result["joint_extrema_check"], {})
+        self.assertEqual(result["restatement_differences"], [])
+        self.assertEqual(
+            result["naive_average_diagnostic"]["status"],
+            "suppressed_because_coverage_incomplete",
+        )
+        suppressed = result["publication_suppressed"]
+        self.assertTrue(suppressed["no_proven_counts_emitted"])
+        self.assertFalse(suppressed["original_publication_modified"])
+
+        # Pending addresses inside the gap are re-marked as coverage gaps,
+        # not as missing/outside addresses.
+        reasons = {p["address_id"]: p["reason"] for p in result["pending_review"]}
+        self.assertEqual(reasons["P02_in_gap"], "inside_uncovered_jurisdiction_area")
+        self.assertEqual(reasons["U03_range_gap"], "overlaps_uncovered_jurisdiction_area")
+        self.assertEqual(
+            reasons["P07_outside_jurisdiction"], "point_outside_or_not_touching_any_district"
+        )
+        self.assertEqual(
+            reasons["M06_missing_pending"], "missing_location_without_explicit_candidate_set"
+        )
+        self.assertEqual(
+            set(suppressed["pending_inside_uncovered_area"]),
+            {"P02_in_gap", "U03_range_gap"},
+        )
+        # Original reasons are preserved for audit.
+        row = next(p for p in result["pending_review"] if p["address_id"] == "P02_in_gap")
+        self.assertEqual(row["pre_coverage_reason"], "point_outside_or_not_touching_any_district")
+
+    def test_uncovered_geometry_is_valid_and_consistent(self):
+        data, raw = load_example("coverage_gap_demo.json")
+        result = run_analysis(data, input_bytes=raw)
+        cov = result["coverage_audit"]
+        geom = parse_geometry(cov["uncovered_geometry"], "uncovered")
+        validate_polygonal_geometry(geom, "uncovered")
+        self.assertAlmostEqual(geometry_area(geom), cov["uncovered_area"], places=9)
+        # Uncovered set is disjoint from every district and inside jurisdiction.
+        for d in data["districts"]:
+            dg = parse_geometry(d["geometry"], "d")
+            self.assertLessEqual(intersection_area(geom, dg), 1e-9)
+        jur = parse_geometry(data["jurisdiction"]["geometry"], "jur")
+        self.assertAlmostEqual(
+            intersection_area(geom, jur), cov["uncovered_area"], places=9
+        )
+
+    def test_complete_coverage_keeps_existing_results(self):
+        data, raw = load_example("coverage_complete_demo.json")
+        result = run_analysis(data, input_bytes=raw)
+        self.assertEqual(result["status"], "feasible")
+        cov = result["coverage_audit"]
+        self.assertEqual(cov["status"], "complete")
+        self.assertTrue(cov["coverage_complete"])
+        self.assertLessEqual(cov["uncovered_area"], 1e-9)
+        self.assertEqual(cov["uncovered_part_count"], 0)
+        self.assertIsNone(cov["uncovered_geometry"])
+        self.assertTrue(cov["gate"]["proven_counts_publishable"])
+
+        # Address attribution and count results are identical to the same
+        # input without a jurisdiction block.
+        stripped = {k: v for k, v in data.items() if k != "jurisdiction"}
+        baseline = run_analysis(stripped)
+        self.assertEqual(result["address_candidates"], baseline["address_candidates"])
+        self.assertEqual(result["pending_review"], baseline["pending_review"])
+        self.assertEqual(result["count_bounds"], baseline["count_bounds"])
+        self.assertEqual(result["determinations"], baseline["determinations"])
+        self.assertEqual(
+            result["restatement_differences"], baseline["restatement_differences"]
+        )
+        bounds = {b["district_id"]: (b["lower"], b["upper"]) for b in result["count_bounds"]}
+        self.assertEqual(bounds, {"A": (1, 1), "B": (0, 1), "C": (0, 1), "D": (1, 1)})
+
+    def test_missing_jurisdiction_is_not_audited_and_counts_unchanged(self):
+        data, raw = load_example("cross_controls_demo.json")
+        result = run_analysis(data, input_bytes=raw)
+        self.assertEqual(result["status"], "feasible")
+        cov = result["coverage_audit"]
+        self.assertEqual(cov["status"], "not_audited")
+        self.assertIsNone(cov["coverage_complete"])
+        self.assertTrue(cov["gate"]["proven_counts_publishable"])
+        self.assertEqual(
+            {b["district_id"]: (b["lower"], b["upper"]) for b in result["count_bounds"]},
+            {"A": (2, 4), "B": (1, 3), "C": (1, 3), "D": (0, 2)},
+        )
+
+    def test_jurisdiction_version_mismatch_rejected(self):
+        data, _ = load_example("coverage_complete_demo.json")
+        bad = json.loads(json.dumps(data))
+        bad["jurisdiction"]["boundary_version"] = "BV-OTHER"
+        with self.assertRaises(InputValidationError) as ctx:
+            run_analysis(bad)
+        self.assertTrue(any("does not match" in e for e in ctx.exception.errors))
+
+    def test_jurisdiction_invalid_geometry_rejected(self):
+        data, _ = load_example("coverage_complete_demo.json")
+        bad = json.loads(json.dumps(data))
+        bad["jurisdiction"]["geometry"] = {
+            "type": "Polygon",
+            "coordinates": [[[0, 0], [10, 0], [10, 10], [0, 10]]],  # not closed
+        }
+        with self.assertRaises(InputValidationError):
+            run_analysis(bad)
+
+    def test_boundary_sets_with_per_set_jurisdiction(self):
+        complete, _ = load_example("coverage_complete_demo.json")
+        gap, _ = load_example("coverage_gap_demo.json")
+        jur_ok = dict(complete["jurisdiction"], boundary_version="V-OK")
+        jur_gap = dict(gap["jurisdiction"], boundary_version="V-GAP")
+        data = {
+            "boundary_sets": [
+                {
+                    "boundary_version": "V-OK",
+                    "districts": complete["districts"],
+                    "jurisdiction": jur_ok,
+                },
+                {
+                    "boundary_version": "V-GAP",
+                    "districts": gap["districts"],
+                    "jurisdiction": jur_gap,
+                },
+            ],
+            "addresses": complete["addresses"],
+            "controls": [
+                {"id": "K_BC", "boundary_version": "V-OK",
+                 "districts": ["B", "C"], "total": 1}
+            ],
+        }
+        ok = run_analysis(data, requested_version="V-OK")
+        self.assertEqual(ok["status"], "feasible")
+        self.assertEqual(ok["coverage_audit"]["status"], "complete")
+        self.assertEqual(ok["coverage_audit"]["jurisdiction_id"], jur_ok["id"])
+
+        gapped = run_analysis(data, requested_version="V-GAP")
+        self.assertEqual(gapped["status"], "coverage_incomplete")
+        self.assertEqual(gapped["coverage_audit"]["jurisdiction_id"], jur_gap["id"])
+        self.assertEqual(gapped["count_bounds"], [])
+
+    def test_holed_jurisdiction_and_outside_area(self):
+        # Jurisdiction is a 10x10 square with a 4x4 hole; districts are the
+        # four quadrants covering the whole square (including the hole area).
+        data, _ = load_example("coverage_complete_demo.json")
+        mod = json.loads(json.dumps(data))
+        mod["jurisdiction"]["geometry"] = {
+            "type": "Polygon",
+            "coordinates": [
+                [[0, 0], [10, 0], [10, 10], [0, 10], [0, 0]],
+                [[3, 3], [3, 7], [7, 7], [7, 3], [3, 3]],
+            ],
+        }
+        result = run_analysis(mod)
+        cov = result["coverage_audit"]
+        self.assertEqual(cov["status"], "complete")
+        self.assertAlmostEqual(cov["jurisdiction_area"], 84.0, places=9)
+        self.assertAlmostEqual(cov["covered_area"], 84.0, places=9)
+        self.assertAlmostEqual(
+            cov["district_area_outside_jurisdiction"], 16.0, places=9
+        )
+        self.assertEqual(result["status"], "feasible")
 
 
 if __name__ == "__main__":

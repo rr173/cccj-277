@@ -10,6 +10,59 @@ def _json_line(obj: Any) -> str:
     return json.dumps(obj, ensure_ascii=False, sort_keys=True)
 
 
+def _coverage_section(result: Dict[str, Any]) -> List[str]:
+    """Coverage audit section (## 3) for audited boundary versions."""
+    out: List[str] = []
+    cov = result.get("coverage_audit") or {}
+    status = cov.get("status")
+    out.append("## 3. 辖区覆盖审计")
+    out.append("")
+    if status == "not_audited" or status is None:
+        out.append("- 未提供该边界版的辖区范围（`jurisdiction`），本次未做覆盖审计。")
+        out.append("- 在输入中为该边界版提供 `jurisdiction` 几何即可启用覆盖闸门。")
+        out.append("")
+        return out
+    out.append(f"- 辖区：`{cov.get('jurisdiction_id')}`（边界版 `{cov.get('boundary_version')}`）")
+    out.append(f"- 辖区面积：{cov.get('jurisdiction_area')}")
+    out.append(
+        f"- 新区覆盖面积：{cov.get('covered_area')}（覆盖率 {cov.get('coverage_ratio')}）"
+    )
+    out.append(
+        f"- **未覆盖面积：{cov.get('uncovered_area')}**"
+        f"（正面积阈值 {cov.get('positive_area_epsilon')}）"
+    )
+    check = cov.get("area_cross_check") or {}
+    out.append(
+        "- 面积交叉复核：未覆盖几何面积 "
+        f"{check.get('uncovered_geometry_plus_sliver_area')} vs 辖区−覆盖 "
+        f"{check.get('jurisdiction_minus_covered_area')}，差 "
+        f"{check.get('absolute_difference')}（容差 {check.get('tolerance')}）→ "
+        f"{'通过' if check.get('within_tolerance') else '**不通过**'}"
+    )
+    outside = cov.get("district_area_outside_jurisdiction")
+    if outside:
+        out.append(f"- 参考：新区超出辖区的面积 {outside}（信息项，不影响覆盖闸门）")
+    if status == "complete":
+        out.append("- 结论：**覆盖完整**；现有地址归属与计数结果不受影响。")
+    elif status == "incomplete":
+        out.append(
+            f"- 结论：**覆盖不完整**：辖区内存在 {cov.get('uncovered_part_count')} "
+            "块未覆盖区域，几何如下（水平条带精确分解，各部分仅共边）："
+        )
+        out.append("")
+        out.append("```json")
+        out.append(_json_line(cov.get("uncovered_geometry")))
+        out.append("```")
+    else:
+        out.append(
+            "- 结论：**覆盖审计异常**（"
+            + str(cov.get("geometry_error") or "面积交叉复核未通过")
+            + "）；按不可发布处理，已暂扣计数与重述结论。"
+        )
+    out.append("")
+    return out
+
+
 def render_markdown(
     result: Dict[str, Any],
     *,
@@ -28,6 +81,15 @@ def render_markdown(
     out.append(f"- 输入摘要：`{binding.get('input_sha256')}`")
     out.append(f"- 几何摘要：`{binding.get('geometry_sha256')}`")
     out.append(f"- 控制摘要：`{binding.get('controls_sha256')}`")
+    cov = result.get("coverage_audit") or {}
+    cov_status = cov.get("status", "not_audited")
+    cov_label = {
+        "complete": "完整覆盖",
+        "incomplete": "**覆盖不完整**",
+        "error": "**审计异常（按不可发布处理）**",
+        "not_audited": "未审计（未提供辖区范围）",
+    }.get(cov_status, str(cov_status))
+    out.append(f"- 辖区覆盖审计：{cov_label}")
     pub = result.get("published_release")
     if pub and pub.get("release_id"):
         out.append(f"- 原发布版：`{pub.get('release_id')}`（只读，SHA-256 `{pub.get('sha256')}`）；本报告是新的重述产物。")
@@ -48,9 +110,14 @@ def render_markdown(
     for r in result.get("address_candidates", []):
         evidence = r.get("spatial_evidence") or {}
         detail = evidence.get("decision") or r.get("reason") or ""
-        if "intersection_areas" in evidence:
+        if r.get("pre_coverage_reason"):
+            # Reclassified by the coverage audit: show the gap reason first.
+            detail = f"{r.get('reason')}（原判定：{r['pre_coverage_reason']}）"
+        if evidence.get("intersection_areas"):
             areas = evidence["intersection_areas"]
             detail += "；相交面积 " + _json_line(areas)
+        if evidence.get("uncovered_jurisdiction_overlap_area") is not None:
+            detail += "；未覆盖重叠面积 " + str(evidence["uncovered_jurisdiction_overlap_area"])
         out.append(
             "| `{id}` | {status} | {cand} | `{src}` | {detail} |".format(
                 id=r.get("address_id"),
@@ -81,9 +148,42 @@ def render_markdown(
         out.append(f"| `{c['control_id']}` | {', '.join('`'+d+'`' for d in c['districts'])} | {c['total']} |")
     out.append("")
 
+    out.extend(_coverage_section(result))
+
+    if status == "coverage_incomplete":
+        suppressed = result.get("publication_suppressed", {})
+        out.append("## 4. 发布闸门：可证计数与重述结论已暂扣")
+        out.append("")
+        out.append(
+            "辖区覆盖不完整，本版**不得发布**以下内容，本次运行也未生成："
+        )
+        out.append("")
+        for section in suppressed.get("withheld_sections", []):
+            out.append(f"- `{section}`")
+        out.append("")
+        gap_pending = suppressed.get("pending_inside_uncovered_area") or []
+        if gap_pending:
+            out.append(
+                "以下待核地址落在辖区内未覆盖区域，属于**边界覆盖缺口**，"
+                "不得当作地址缺失："
+            )
+            out.append("")
+            for aid in gap_pending:
+                out.append(f"- `{aid}`")
+            out.append("")
+        out.append("修复新区边界使其完整覆盖辖区后重新运行；原发布版数据只读，未被修改。")
+        out.append("")
+        out.append("## 5. 独立复核")
+        out.append("")
+        out.append("```bash")
+        out.append(verify_command or "python3 -I /workspace/redistrict/cli.py verify --input <input.json> --result <result.json>")
+        out.append("```")
+        out.append("")
+        return "\n".join(out)
+
     if status == "infeasible":
         conflict = result.get("conflict", {})
-        out.append("## 3. 整体无解：可复核冲突")
+        out.append("## 4. 整体无解：可复核冲突")
         out.append("")
         out.append(f"- 求解器结论：`{conflict.get('reason')}`")
         out.append(f"- 最小冲突控制核：{', '.join('`'+x+'`' for x in conflict.get('minimal_control_core_ids', []))}")
@@ -130,7 +230,7 @@ def render_markdown(
         out.append("")
         return "\n".join(out)
 
-    out.append("## 3. 各新区可证计数上下界及全局见证")
+    out.append("## 4. 各新区可证计数上下界及全局见证")
     out.append("")
     out.append("> 上下界来自对全部合法分配的精确优化。每个界都附完整分配；不得把不同区的独立极值自行拼接。")
     out.append("")
@@ -176,7 +276,7 @@ def render_markdown(
             )
         out.append("")
 
-    out.append("## 4. 地址级确定性")
+    out.append("## 5. 地址级确定性")
     out.append("")
     out.append("只有在所有合法分配中候选新区唯一时才写作“确定”。")
     out.append("")
@@ -192,7 +292,7 @@ def render_markdown(
 
     diffs = result.get("restatement_differences", [])
     if diffs:
-        out.append("## 5. 与原发布版/可比发布数的重述差异")
+        out.append("## 6. 与原发布版/可比发布数的重述差异")
         out.append("")
         out.append("差异字段同时给出两个方向，避免符号歧义。")
         out.append("")
@@ -212,7 +312,7 @@ def render_markdown(
 
     naive = result.get("naive_average_diagnostic")
     if naive:
-        out.append("## 6. “平均摊”诊断（非证明计数）")
+        out.append("## 7. “平均摊”诊断（非证明计数）")
         out.append("")
         out.append(naive["warning"])
         out.append("")
@@ -228,7 +328,7 @@ def render_markdown(
             )
         out.append("")
 
-    out.append("## 7. 独立复核")
+    out.append("## 8. 独立复核")
     out.append("")
     out.append("```bash")
     out.append(verify_command or "python3 -I /workspace/redistrict/cli.py verify --input <input.json> --result <result.json>")
