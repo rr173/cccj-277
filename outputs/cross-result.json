@@ -1,0 +1,1934 @@
+{
+  "schema_version": "redistrict-result/1.0",
+  "tool_version": "1.0.0",
+  "status": "feasible",
+  "version_binding": {
+    "schema_version": "redistrict-result/1.0",
+    "tool_version": "1.0.0",
+    "boundary_version": "BV-2026.1",
+    "input_sha256": "1abec2d6aab16631fa635d80d9fd3ef1857ec760237e3b52d2c2af9933d52fc0",
+    "input_canonical_sha256": "1fd6e98b02928dfdafaf3b4637542913fece289414faa95a6d2a2cfbf2a55d74",
+    "geometry_sha256": "ebdd6c634d1d6f21f4c424b9429f4ac8a9c605b22d443d3c01c532ee9cfb1dbd",
+    "controls_sha256": "e5c20497760fe2860ed1082cd03747737a2347fbba95d2bc9d74ef179ccf5ac3",
+    "published_sha256": "f177ce52ae8afee11587fa8e9aab38f1dac300f1628f1e0afe67cc5bf164ec8c",
+    "original_publication_modified": false
+  },
+  "published_release": {
+    "release_id": "PUB-2020-OLD",
+    "release_status": "original_published_immutable",
+    "boundary_version": "BV-2020",
+    "published_at": "2021-01-20",
+    "sha256": "f177ce52ae8afee11587fa8e9aab38f1dac300f1628f1e0afe67cc5bf164ec8c",
+    "write_policy": "read_only_input; restatement is written to a separate output"
+  },
+  "boundary_version": "BV-2026.1",
+  "district_ids": [
+    "A",
+    "B",
+    "C",
+    "D"
+  ],
+  "address_count_total": 10,
+  "eligible_address_count": 8,
+  "pending_review_count": 2,
+  "pending_review": [
+    {
+      "address_id": "M09_missing_pending",
+      "input_index": 8,
+      "location_kind": "missing",
+      "status": "pending_review",
+      "candidate_districts": [],
+      "reason": "missing_location_without_explicit_candidate_set",
+      "rule": "No old code or areal average may supply candidates."
+    },
+    {
+      "address_id": "P10_outside_pending",
+      "input_index": 9,
+      "location_kind": "Point",
+      "status": "pending_review",
+      "candidate_source": "point_no_containment_or_touch",
+      "candidate_districts": [],
+      "reason": "point_outside_or_not_touching_any_district",
+      "spatial_evidence": {
+        "boundary_touch_districts": [],
+        "interior_districts": [],
+        "decision": "point outside all target districts"
+      }
+    }
+  ],
+  "address_candidates": [
+    {
+      "address_id": "P01_A_interior",
+      "input_index": 0,
+      "location_kind": "Point",
+      "status": "eligible",
+      "candidate_source": "point_interior_containment",
+      "candidate_districts": [
+        "A"
+      ],
+      "reason": null,
+      "spatial_evidence": {
+        "boundary_touch_districts": [],
+        "interior_districts": [
+          "A"
+        ],
+        "decision": "strict interior"
+      }
+    },
+    {
+      "address_id": "P02_AC_boundary_priority",
+      "input_index": 1,
+      "location_kind": "Point",
+      "status": "eligible",
+      "candidate_source": "shared_boundary_priority",
+      "candidate_districts": [
+        "A"
+      ],
+      "reason": null,
+      "spatial_evidence": {
+        "boundary_touch_districts": [
+          "A",
+          "C"
+        ],
+        "interior_districts": [],
+        "decision": "priority winner A"
+      }
+    },
+    {
+      "address_id": "P03_CD_boundary_tie",
+      "input_index": 2,
+      "location_kind": "Point",
+      "status": "eligible",
+      "candidate_source": "shared_boundary_all_touch",
+      "candidate_districts": [
+        "C",
+        "D"
+      ],
+      "reason": null,
+      "spatial_evidence": {
+        "boundary_touch_districts": [
+          "C",
+          "D"
+        ],
+        "interior_districts": [],
+        "decision": "priority tie; all touching districts retained"
+      }
+    },
+    {
+      "address_id": "U04_AB_range",
+      "input_index": 3,
+      "location_kind": "Polygon",
+      "status": "eligible",
+      "candidate_source": "positive_area_intersection",
+      "candidate_districts": [
+        "A",
+        "B"
+      ],
+      "spatial_evidence": {
+        "intersection_areas": {
+          "A": 6.0,
+          "B": 6.0
+        },
+        "positive_area_epsilon": 1e-09,
+        "rule": "boundary-only/zero-area contact is not a candidate"
+      }
+    },
+    {
+      "address_id": "U05_BD_range",
+      "input_index": 4,
+      "location_kind": "Polygon",
+      "status": "eligible",
+      "candidate_source": "positive_area_intersection",
+      "candidate_districts": [
+        "B",
+        "D"
+      ],
+      "spatial_evidence": {
+        "intersection_areas": {
+          "B": 4.0,
+          "D": 4.0
+        },
+        "positive_area_epsilon": 1e-09,
+        "rule": "boundary-only/zero-area contact is not a candidate"
+      }
+    },
+    {
+      "address_id": "U06_CD_range",
+      "input_index": 5,
+      "location_kind": "Polygon",
+      "status": "eligible",
+      "candidate_source": "positive_area_intersection",
+      "candidate_districts": [
+        "C",
+        "D"
+      ],
+      "spatial_evidence": {
+        "intersection_areas": {
+          "C": 4.0,
+          "D": 4.0
+        },
+        "positive_area_epsilon": 1e-09,
+        "rule": "boundary-only/zero-area contact is not a candidate"
+      }
+    },
+    {
+      "address_id": "U07_AC_range",
+      "input_index": 6,
+      "location_kind": "Polygon",
+      "status": "eligible",
+      "candidate_source": "positive_area_intersection",
+      "candidate_districts": [
+        "A",
+        "C"
+      ],
+      "spatial_evidence": {
+        "intersection_areas": {
+          "A": 2.0,
+          "C": 2.0
+        },
+        "positive_area_epsilon": 1e-09,
+        "rule": "boundary-only/zero-area contact is not a candidate"
+      }
+    },
+    {
+      "address_id": "M08_explicit_BC",
+      "input_index": 7,
+      "location_kind": "missing",
+      "status": "eligible",
+      "candidate_source": "explicit_missing_location",
+      "candidate_districts": [
+        "B",
+        "C"
+      ],
+      "reason": null
+    },
+    {
+      "address_id": "M09_missing_pending",
+      "input_index": 8,
+      "location_kind": "missing",
+      "status": "pending_review",
+      "candidate_districts": [],
+      "reason": "missing_location_without_explicit_candidate_set",
+      "rule": "No old code or areal average may supply candidates."
+    },
+    {
+      "address_id": "P10_outside_pending",
+      "input_index": 9,
+      "location_kind": "Point",
+      "status": "pending_review",
+      "candidate_source": "point_no_containment_or_touch",
+      "candidate_districts": [],
+      "reason": "point_outside_or_not_touching_any_district",
+      "spatial_evidence": {
+        "boundary_touch_districts": [],
+        "interior_districts": [],
+        "decision": "point outside all target districts"
+      }
+    }
+  ],
+  "controls": [
+    {
+      "control_id": "K_AB_5",
+      "boundary_version": "BV-2026.1",
+      "districts": [
+        "A",
+        "B"
+      ],
+      "total": 5
+    },
+    {
+      "control_id": "K_BC_4",
+      "boundary_version": "BV-2026.1",
+      "districts": [
+        "B",
+        "C"
+      ],
+      "total": 4
+    },
+    {
+      "control_id": "K_CD_3",
+      "boundary_version": "BV-2026.1",
+      "districts": [
+        "C",
+        "D"
+      ],
+      "total": 3
+    }
+  ],
+  "control_population_basis": "Each control.total is enforced on eligible participating addresses only. pending_review addresses are excluded from proven counts and witnesses.",
+  "ignored_controls_other_versions": [],
+  "naive_average_diagnostic": {
+    "status": "diagnostic_not_legal_assignment",
+    "warning": "Fractional averaging is not used for proven bounds and must not be published as an address count.",
+    "equal_split_district_equivalents": {
+      "A": 3.0,
+      "B": 1.5,
+      "C": 2.0,
+      "D": 1.5
+    },
+    "area_weighted_district_equivalents": {
+      "A": 3.0,
+      "B": 1.5,
+      "C": 2.0,
+      "D": 1.5
+    },
+    "address_weights": [
+      {
+        "address_id": "P01_A_interior",
+        "weights": {
+          "A": 1.0
+        },
+        "basis": "equal_fallback"
+      },
+      {
+        "address_id": "P02_AC_boundary_priority",
+        "weights": {
+          "A": 1.0
+        },
+        "basis": "equal_fallback"
+      },
+      {
+        "address_id": "P03_CD_boundary_tie",
+        "weights": {
+          "C": 0.5,
+          "D": 0.5
+        },
+        "basis": "equal_fallback"
+      },
+      {
+        "address_id": "U04_AB_range",
+        "weights": {
+          "A": 0.5,
+          "B": 0.5
+        }
+      },
+      {
+        "address_id": "U05_BD_range",
+        "weights": {
+          "B": 0.5,
+          "D": 0.5
+        }
+      },
+      {
+        "address_id": "U06_CD_range",
+        "weights": {
+          "C": 0.5,
+          "D": 0.5
+        }
+      },
+      {
+        "address_id": "U07_AC_range",
+        "weights": {
+          "A": 0.5,
+          "C": 0.5
+        }
+      },
+      {
+        "address_id": "M08_explicit_BC",
+        "weights": {
+          "B": 0.5,
+          "C": 0.5
+        },
+        "basis": "equal_fallback"
+      }
+    ],
+    "district_bound_comparison": {
+      "A": {
+        "area_weighted_value": 3.0,
+        "area_weighted_minus_lower": 1.0,
+        "area_weighted_minus_upper": -1.0,
+        "area_weighted_within_integer_interval_span": true,
+        "equal_split_value": 3.0,
+        "equal_split_minus_lower": 1.0,
+        "equal_split_minus_upper": -1.0,
+        "warning": "A fractional value inside [lower, upper] is still not an assignment or proof."
+      },
+      "B": {
+        "area_weighted_value": 1.5,
+        "area_weighted_minus_lower": 0.5,
+        "area_weighted_minus_upper": -1.5,
+        "area_weighted_within_integer_interval_span": true,
+        "equal_split_value": 1.5,
+        "equal_split_minus_lower": 0.5,
+        "equal_split_minus_upper": -1.5,
+        "warning": "A fractional value inside [lower, upper] is still not an assignment or proof."
+      },
+      "C": {
+        "area_weighted_value": 2.0,
+        "area_weighted_minus_lower": 1.0,
+        "area_weighted_minus_upper": -1.0,
+        "area_weighted_within_integer_interval_span": true,
+        "equal_split_value": 2.0,
+        "equal_split_minus_lower": 1.0,
+        "equal_split_minus_upper": -1.0,
+        "warning": "A fractional value inside [lower, upper] is still not an assignment or proof."
+      },
+      "D": {
+        "area_weighted_value": 1.5,
+        "area_weighted_minus_lower": 1.5,
+        "area_weighted_minus_upper": -0.5,
+        "area_weighted_within_integer_interval_span": true,
+        "equal_split_value": 1.5,
+        "equal_split_minus_lower": 1.5,
+        "equal_split_minus_upper": -0.5,
+        "warning": "A fractional value inside [lower, upper] is still not an assignment or proof."
+      }
+    }
+  },
+  "count_bounds": [
+    {
+      "district_id": "A",
+      "lower": 2,
+      "upper": 4,
+      "fixed": false,
+      "lower_witness_id": "witness:A:lower",
+      "upper_witness_id": "witness:A:upper",
+      "lower_witness": {
+        "witness_id": "witness:A:lower",
+        "kind": "district_lower",
+        "district_id": "A",
+        "group_districts": null,
+        "value": 2,
+        "assignment": {
+          "M08_explicit_BC": "B",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "D",
+          "U04_AB_range": "B",
+          "U05_BD_range": "B",
+          "U06_CD_range": "D",
+          "U07_AC_range": "C"
+        },
+        "district_counts": {
+          "A": 2,
+          "B": 3,
+          "C": 1,
+          "D": 2
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "upper_witness": {
+        "witness_id": "witness:A:upper",
+        "kind": "district_upper",
+        "district_id": "A",
+        "group_districts": null,
+        "value": 4,
+        "assignment": {
+          "M08_explicit_BC": "C",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "C",
+          "U04_AB_range": "A",
+          "U05_BD_range": "B",
+          "U06_CD_range": "C",
+          "U07_AC_range": "A"
+        },
+        "district_counts": {
+          "A": 4,
+          "B": 1,
+          "C": 3,
+          "D": 0
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "solver_nodes": {
+        "lower": 13,
+        "upper": 9
+      }
+    },
+    {
+      "district_id": "B",
+      "lower": 1,
+      "upper": 3,
+      "fixed": false,
+      "lower_witness_id": "witness:B:lower",
+      "upper_witness_id": "witness:B:upper",
+      "lower_witness": {
+        "witness_id": "witness:B:lower",
+        "kind": "district_lower",
+        "district_id": "B",
+        "group_districts": null,
+        "value": 1,
+        "assignment": {
+          "M08_explicit_BC": "C",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "C",
+          "U04_AB_range": "A",
+          "U05_BD_range": "B",
+          "U06_CD_range": "C",
+          "U07_AC_range": "A"
+        },
+        "district_counts": {
+          "A": 4,
+          "B": 1,
+          "C": 3,
+          "D": 0
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "upper_witness": {
+        "witness_id": "witness:B:upper",
+        "kind": "district_upper",
+        "district_id": "B",
+        "group_districts": null,
+        "value": 3,
+        "assignment": {
+          "M08_explicit_BC": "B",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "D",
+          "U04_AB_range": "B",
+          "U05_BD_range": "B",
+          "U06_CD_range": "D",
+          "U07_AC_range": "C"
+        },
+        "district_counts": {
+          "A": 2,
+          "B": 3,
+          "C": 1,
+          "D": 2
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "solver_nodes": {
+        "lower": 11,
+        "upper": 13
+      }
+    },
+    {
+      "district_id": "C",
+      "lower": 1,
+      "upper": 3,
+      "fixed": false,
+      "lower_witness_id": "witness:C:lower",
+      "upper_witness_id": "witness:C:upper",
+      "lower_witness": {
+        "witness_id": "witness:C:lower",
+        "kind": "district_lower",
+        "district_id": "C",
+        "group_districts": null,
+        "value": 1,
+        "assignment": {
+          "M08_explicit_BC": "B",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "D",
+          "U04_AB_range": "B",
+          "U05_BD_range": "B",
+          "U06_CD_range": "D",
+          "U07_AC_range": "C"
+        },
+        "district_counts": {
+          "A": 2,
+          "B": 3,
+          "C": 1,
+          "D": 2
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "upper_witness": {
+        "witness_id": "witness:C:upper",
+        "kind": "district_upper",
+        "district_id": "C",
+        "group_districts": null,
+        "value": 3,
+        "assignment": {
+          "M08_explicit_BC": "C",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "C",
+          "U04_AB_range": "A",
+          "U05_BD_range": "B",
+          "U06_CD_range": "C",
+          "U07_AC_range": "A"
+        },
+        "district_counts": {
+          "A": 4,
+          "B": 1,
+          "C": 3,
+          "D": 0
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "solver_nodes": {
+        "lower": 9,
+        "upper": 11
+      }
+    },
+    {
+      "district_id": "D",
+      "lower": 0,
+      "upper": 2,
+      "fixed": false,
+      "lower_witness_id": "witness:D:lower",
+      "upper_witness_id": "witness:D:upper",
+      "lower_witness": {
+        "witness_id": "witness:D:lower",
+        "kind": "district_lower",
+        "district_id": "D",
+        "group_districts": null,
+        "value": 0,
+        "assignment": {
+          "M08_explicit_BC": "C",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "C",
+          "U04_AB_range": "A",
+          "U05_BD_range": "B",
+          "U06_CD_range": "C",
+          "U07_AC_range": "A"
+        },
+        "district_counts": {
+          "A": 4,
+          "B": 1,
+          "C": 3,
+          "D": 0
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "upper_witness": {
+        "witness_id": "witness:D:upper",
+        "kind": "district_upper",
+        "district_id": "D",
+        "group_districts": null,
+        "value": 2,
+        "assignment": {
+          "M08_explicit_BC": "B",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "D",
+          "U04_AB_range": "B",
+          "U05_BD_range": "B",
+          "U06_CD_range": "D",
+          "U07_AC_range": "C"
+        },
+        "district_counts": {
+          "A": 2,
+          "B": 3,
+          "C": 1,
+          "D": 2
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      },
+      "solver_nodes": {
+        "lower": 9,
+        "upper": 9
+      }
+    }
+  ],
+  "joint_extrema_check": {
+    "all_district_lower_values": {
+      "values": {
+        "A": 2,
+        "B": 1,
+        "C": 1,
+        "D": 0
+      },
+      "jointly_feasible": false
+    },
+    "all_district_upper_values": {
+      "values": {
+        "A": 4,
+        "B": 3,
+        "C": 3,
+        "D": 2
+      },
+      "jointly_feasible": false
+    },
+    "rule": "District extrema are proven separately. A stitched vector is accepted only if this joint solver check returns a complete witness; otherwise it is not a legal assignment."
+  },
+  "witnesses": [
+    {
+      "witness_id": "witness:A:lower",
+      "kind": "district_lower",
+      "district_id": "A",
+      "group_districts": null,
+      "value": 2,
+      "assignment": {
+        "M08_explicit_BC": "B",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "D",
+        "U04_AB_range": "B",
+        "U05_BD_range": "B",
+        "U06_CD_range": "D",
+        "U07_AC_range": "C"
+      },
+      "district_counts": {
+        "A": 2,
+        "B": 3,
+        "C": 1,
+        "D": 2
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:A:upper",
+      "kind": "district_upper",
+      "district_id": "A",
+      "group_districts": null,
+      "value": 4,
+      "assignment": {
+        "M08_explicit_BC": "C",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "C",
+        "U04_AB_range": "A",
+        "U05_BD_range": "B",
+        "U06_CD_range": "C",
+        "U07_AC_range": "A"
+      },
+      "district_counts": {
+        "A": 4,
+        "B": 1,
+        "C": 3,
+        "D": 0
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:B:lower",
+      "kind": "district_lower",
+      "district_id": "B",
+      "group_districts": null,
+      "value": 1,
+      "assignment": {
+        "M08_explicit_BC": "C",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "C",
+        "U04_AB_range": "A",
+        "U05_BD_range": "B",
+        "U06_CD_range": "C",
+        "U07_AC_range": "A"
+      },
+      "district_counts": {
+        "A": 4,
+        "B": 1,
+        "C": 3,
+        "D": 0
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:B:upper",
+      "kind": "district_upper",
+      "district_id": "B",
+      "group_districts": null,
+      "value": 3,
+      "assignment": {
+        "M08_explicit_BC": "B",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "D",
+        "U04_AB_range": "B",
+        "U05_BD_range": "B",
+        "U06_CD_range": "D",
+        "U07_AC_range": "C"
+      },
+      "district_counts": {
+        "A": 2,
+        "B": 3,
+        "C": 1,
+        "D": 2
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:C:lower",
+      "kind": "district_lower",
+      "district_id": "C",
+      "group_districts": null,
+      "value": 1,
+      "assignment": {
+        "M08_explicit_BC": "B",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "D",
+        "U04_AB_range": "B",
+        "U05_BD_range": "B",
+        "U06_CD_range": "D",
+        "U07_AC_range": "C"
+      },
+      "district_counts": {
+        "A": 2,
+        "B": 3,
+        "C": 1,
+        "D": 2
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:C:upper",
+      "kind": "district_upper",
+      "district_id": "C",
+      "group_districts": null,
+      "value": 3,
+      "assignment": {
+        "M08_explicit_BC": "C",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "C",
+        "U04_AB_range": "A",
+        "U05_BD_range": "B",
+        "U06_CD_range": "C",
+        "U07_AC_range": "A"
+      },
+      "district_counts": {
+        "A": 4,
+        "B": 1,
+        "C": 3,
+        "D": 0
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:D:lower",
+      "kind": "district_lower",
+      "district_id": "D",
+      "group_districts": null,
+      "value": 0,
+      "assignment": {
+        "M08_explicit_BC": "C",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "C",
+        "U04_AB_range": "A",
+        "U05_BD_range": "B",
+        "U06_CD_range": "C",
+        "U07_AC_range": "A"
+      },
+      "district_counts": {
+        "A": 4,
+        "B": 1,
+        "C": 3,
+        "D": 0
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:D:upper",
+      "kind": "district_upper",
+      "district_id": "D",
+      "group_districts": null,
+      "value": 2,
+      "assignment": {
+        "M08_explicit_BC": "B",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "D",
+        "U04_AB_range": "B",
+        "U05_BD_range": "B",
+        "U06_CD_range": "D",
+        "U07_AC_range": "C"
+      },
+      "district_counts": {
+        "A": 2,
+        "B": 3,
+        "C": 1,
+        "D": 2
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:ambiguity:P03_CD_boundary_tie",
+      "kind": "address_alternative",
+      "district_id": "D",
+      "group_districts": null,
+      "value": null,
+      "assignment": {
+        "M08_explicit_BC": "B",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "D",
+        "U04_AB_range": "A",
+        "U05_BD_range": "B",
+        "U06_CD_range": "C",
+        "U07_AC_range": "C"
+      },
+      "district_counts": {
+        "A": 3,
+        "B": 2,
+        "C": 2,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:ambiguity:U04_AB_range",
+      "kind": "address_alternative",
+      "district_id": "B",
+      "group_districts": null,
+      "value": null,
+      "assignment": {
+        "M08_explicit_BC": "C",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "C",
+        "U04_AB_range": "B",
+        "U05_BD_range": "B",
+        "U06_CD_range": "D",
+        "U07_AC_range": "A"
+      },
+      "district_counts": {
+        "A": 3,
+        "B": 2,
+        "C": 2,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:ambiguity:U05_BD_range",
+      "kind": "address_alternative",
+      "district_id": "D",
+      "group_districts": null,
+      "value": null,
+      "assignment": {
+        "M08_explicit_BC": "B",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "C",
+        "U04_AB_range": "B",
+        "U05_BD_range": "D",
+        "U06_CD_range": "C",
+        "U07_AC_range": "A"
+      },
+      "district_counts": {
+        "A": 3,
+        "B": 2,
+        "C": 2,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:ambiguity:U06_CD_range",
+      "kind": "address_alternative",
+      "district_id": "D",
+      "group_districts": null,
+      "value": null,
+      "assignment": {
+        "M08_explicit_BC": "B",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "C",
+        "U04_AB_range": "A",
+        "U05_BD_range": "B",
+        "U06_CD_range": "D",
+        "U07_AC_range": "C"
+      },
+      "district_counts": {
+        "A": 3,
+        "B": 2,
+        "C": 2,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:ambiguity:U07_AC_range",
+      "kind": "address_alternative",
+      "district_id": "C",
+      "group_districts": null,
+      "value": null,
+      "assignment": {
+        "M08_explicit_BC": "B",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "C",
+        "U04_AB_range": "A",
+        "U05_BD_range": "B",
+        "U06_CD_range": "D",
+        "U07_AC_range": "C"
+      },
+      "district_counts": {
+        "A": 3,
+        "B": 2,
+        "C": 2,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    },
+    {
+      "witness_id": "witness:ambiguity:M08_explicit_BC",
+      "kind": "address_alternative",
+      "district_id": "B",
+      "group_districts": null,
+      "value": null,
+      "assignment": {
+        "M08_explicit_BC": "B",
+        "P01_A_interior": "A",
+        "P02_AC_boundary_priority": "A",
+        "P03_CD_boundary_tie": "C",
+        "U04_AB_range": "A",
+        "U05_BD_range": "B",
+        "U06_CD_range": "D",
+        "U07_AC_range": "C"
+      },
+      "district_counts": {
+        "A": 3,
+        "B": 2,
+        "C": 2,
+        "D": 1
+      },
+      "control_checks": [
+        {
+          "control_id": "K_AB_5",
+          "expected": 5,
+          "observed": 5,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_BC_4",
+          "expected": 4,
+          "observed": 4,
+          "satisfied": true
+        },
+        {
+          "control_id": "K_CD_3",
+          "expected": 3,
+          "observed": 3,
+          "satisfied": true
+        }
+      ],
+      "verified": true
+    }
+  ],
+  "determinations": [
+    {
+      "address_id": "P01_A_interior",
+      "candidate_districts": [
+        "A"
+      ],
+      "legally_possible_districts": [
+        "A"
+      ],
+      "determination": "deterministic",
+      "assigned_district": "A"
+    },
+    {
+      "address_id": "P02_AC_boundary_priority",
+      "candidate_districts": [
+        "A"
+      ],
+      "legally_possible_districts": [
+        "A"
+      ],
+      "determination": "deterministic",
+      "assigned_district": "A"
+    },
+    {
+      "address_id": "P03_CD_boundary_tie",
+      "candidate_districts": [
+        "C",
+        "D"
+      ],
+      "legally_possible_districts": [
+        "C",
+        "D"
+      ],
+      "determination": "ambiguous",
+      "assigned_district": null,
+      "ambiguity_witness_district": "D",
+      "ambiguity_witness": {
+        "witness_id": "witness:ambiguity:P03_CD_boundary_tie",
+        "kind": "address_alternative",
+        "district_id": "D",
+        "group_districts": null,
+        "value": null,
+        "assignment": {
+          "M08_explicit_BC": "B",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "D",
+          "U04_AB_range": "A",
+          "U05_BD_range": "B",
+          "U06_CD_range": "C",
+          "U07_AC_range": "C"
+        },
+        "district_counts": {
+          "A": 3,
+          "B": 2,
+          "C": 2,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      }
+    },
+    {
+      "address_id": "U04_AB_range",
+      "candidate_districts": [
+        "A",
+        "B"
+      ],
+      "legally_possible_districts": [
+        "A",
+        "B"
+      ],
+      "determination": "ambiguous",
+      "assigned_district": null,
+      "ambiguity_witness_district": "B",
+      "ambiguity_witness": {
+        "witness_id": "witness:ambiguity:U04_AB_range",
+        "kind": "address_alternative",
+        "district_id": "B",
+        "group_districts": null,
+        "value": null,
+        "assignment": {
+          "M08_explicit_BC": "C",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "C",
+          "U04_AB_range": "B",
+          "U05_BD_range": "B",
+          "U06_CD_range": "D",
+          "U07_AC_range": "A"
+        },
+        "district_counts": {
+          "A": 3,
+          "B": 2,
+          "C": 2,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      }
+    },
+    {
+      "address_id": "U05_BD_range",
+      "candidate_districts": [
+        "B",
+        "D"
+      ],
+      "legally_possible_districts": [
+        "B",
+        "D"
+      ],
+      "determination": "ambiguous",
+      "assigned_district": null,
+      "ambiguity_witness_district": "D",
+      "ambiguity_witness": {
+        "witness_id": "witness:ambiguity:U05_BD_range",
+        "kind": "address_alternative",
+        "district_id": "D",
+        "group_districts": null,
+        "value": null,
+        "assignment": {
+          "M08_explicit_BC": "B",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "C",
+          "U04_AB_range": "B",
+          "U05_BD_range": "D",
+          "U06_CD_range": "C",
+          "U07_AC_range": "A"
+        },
+        "district_counts": {
+          "A": 3,
+          "B": 2,
+          "C": 2,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      }
+    },
+    {
+      "address_id": "U06_CD_range",
+      "candidate_districts": [
+        "C",
+        "D"
+      ],
+      "legally_possible_districts": [
+        "C",
+        "D"
+      ],
+      "determination": "ambiguous",
+      "assigned_district": null,
+      "ambiguity_witness_district": "D",
+      "ambiguity_witness": {
+        "witness_id": "witness:ambiguity:U06_CD_range",
+        "kind": "address_alternative",
+        "district_id": "D",
+        "group_districts": null,
+        "value": null,
+        "assignment": {
+          "M08_explicit_BC": "B",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "C",
+          "U04_AB_range": "A",
+          "U05_BD_range": "B",
+          "U06_CD_range": "D",
+          "U07_AC_range": "C"
+        },
+        "district_counts": {
+          "A": 3,
+          "B": 2,
+          "C": 2,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      }
+    },
+    {
+      "address_id": "U07_AC_range",
+      "candidate_districts": [
+        "A",
+        "C"
+      ],
+      "legally_possible_districts": [
+        "A",
+        "C"
+      ],
+      "determination": "ambiguous",
+      "assigned_district": null,
+      "ambiguity_witness_district": "C",
+      "ambiguity_witness": {
+        "witness_id": "witness:ambiguity:U07_AC_range",
+        "kind": "address_alternative",
+        "district_id": "C",
+        "group_districts": null,
+        "value": null,
+        "assignment": {
+          "M08_explicit_BC": "B",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "C",
+          "U04_AB_range": "A",
+          "U05_BD_range": "B",
+          "U06_CD_range": "D",
+          "U07_AC_range": "C"
+        },
+        "district_counts": {
+          "A": 3,
+          "B": 2,
+          "C": 2,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      }
+    },
+    {
+      "address_id": "M08_explicit_BC",
+      "candidate_districts": [
+        "B",
+        "C"
+      ],
+      "legally_possible_districts": [
+        "B",
+        "C"
+      ],
+      "determination": "ambiguous",
+      "assigned_district": null,
+      "ambiguity_witness_district": "B",
+      "ambiguity_witness": {
+        "witness_id": "witness:ambiguity:M08_explicit_BC",
+        "kind": "address_alternative",
+        "district_id": "B",
+        "group_districts": null,
+        "value": null,
+        "assignment": {
+          "M08_explicit_BC": "B",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "C",
+          "U04_AB_range": "A",
+          "U05_BD_range": "B",
+          "U06_CD_range": "D",
+          "U07_AC_range": "C"
+        },
+        "district_counts": {
+          "A": 3,
+          "B": 2,
+          "C": 2,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      }
+    }
+  ],
+  "restatement_differences": [
+    {
+      "comparison_id": "PUB_A_2020",
+      "label": "原发布版 A 可比片",
+      "published_release_id": "PUB-2020-OLD",
+      "members": [
+        "A"
+      ],
+      "published_count": 3,
+      "proven_lower": 2,
+      "proven_upper": 4,
+      "restated_minus_published_lower_edge": -1,
+      "restated_minus_published_upper_edge": 1,
+      "published_minus_lower": 1,
+      "published_minus_upper": -1,
+      "published_count_within_outer_bounds": true,
+      "exact_published_value_globally_feasible": true,
+      "exact_value_witness": {
+        "witness_id": "witness:published-exact:PUB_A_2020",
+        "kind": "published_exact_value",
+        "district_id": null,
+        "group_districts": [
+          "A"
+        ],
+        "value": 3,
+        "assignment": {
+          "M08_explicit_BC": "B",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "C",
+          "U04_AB_range": "A",
+          "U05_BD_range": "B",
+          "U06_CD_range": "D",
+          "U07_AC_range": "C"
+        },
+        "district_counts": {
+          "A": 3,
+          "B": 2,
+          "C": 2,
+          "D": 1
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          },
+          {
+            "control_id": "__exact_published_PUB_A_2020",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      }
+    },
+    {
+      "comparison_id": "PUB_NORTH_AB",
+      "label": "原发布版北部汇总",
+      "published_release_id": "PUB-2020-OLD",
+      "members": [
+        "A",
+        "B"
+      ],
+      "published_count": 5,
+      "proven_lower": 5,
+      "proven_upper": 5,
+      "restated_minus_published_lower_edge": 0,
+      "restated_minus_published_upper_edge": 0,
+      "published_minus_lower": 0,
+      "published_minus_upper": 0,
+      "published_count_within_outer_bounds": true,
+      "exact_published_value_globally_feasible": true,
+      "exact_value_witness": {
+        "witness_id": "witness:published-exact:PUB_NORTH_AB",
+        "kind": "published_exact_value",
+        "district_id": null,
+        "group_districts": [
+          "A",
+          "B"
+        ],
+        "value": 5,
+        "assignment": {
+          "M08_explicit_BC": "C",
+          "P01_A_interior": "A",
+          "P02_AC_boundary_priority": "A",
+          "P03_CD_boundary_tie": "C",
+          "U04_AB_range": "A",
+          "U05_BD_range": "B",
+          "U06_CD_range": "C",
+          "U07_AC_range": "A"
+        },
+        "district_counts": {
+          "A": 4,
+          "B": 1,
+          "C": 3,
+          "D": 0
+        },
+        "control_checks": [
+          {
+            "control_id": "K_AB_5",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_BC_4",
+            "expected": 4,
+            "observed": 4,
+            "satisfied": true
+          },
+          {
+            "control_id": "K_CD_3",
+            "expected": 3,
+            "observed": 3,
+            "satisfied": true
+          },
+          {
+            "control_id": "__exact_published_PUB_NORTH_AB",
+            "expected": 5,
+            "observed": 5,
+            "satisfied": true
+          }
+        ],
+        "verified": true
+      }
+    }
+  ],
+  "global_warning": "Each lower/upper witness is a complete global assignment. Do not combine district-specific lower or upper entries into one vector unless a witness exists for it."
+}

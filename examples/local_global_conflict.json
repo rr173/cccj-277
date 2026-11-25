@@ -1,0 +1,81 @@
+{
+  "schema_version": "redistrict-input/1.0",
+  "dataset_id": "local-feasible-global-conflict-demo",
+  "boundary_version": "BV-CONFLICT",
+  "boundary_priority_policy": "input_order",
+  "geometry_tolerance": 1e-9,
+  "positive_area_epsilon": 1e-9,
+  "districts": [
+    {
+      "id": "A",
+      "name": "甲区",
+      "boundary_priority": 1,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[0, 0], [5, 0], [5, 10], [0, 10], [0, 0]]]
+      }
+    },
+    {
+      "id": "B",
+      "name": "乙区",
+      "boundary_priority": 2,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5, 5], [10, 5], [10, 10], [5, 10], [5, 5]]]
+      }
+    },
+    {
+      "id": "C",
+      "name": "丙区",
+      "boundary_priority": 3,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[5, 0], [10, 0], [10, 5], [5, 5], [5, 0]]]
+      }
+    }
+  ],
+  "addresses": [
+    {
+      "id": "X_AB",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[4, 7], [6, 7], [6, 9], [4, 9], [4, 7]]]
+      }
+    },
+    {
+      "id": "Y_BC",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[7, 4], [9, 4], [9, 6], [7, 6], [7, 4]]]
+      }
+    },
+    {
+      "id": "Z_AC",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[4, 2], [6, 2], [6, 4], [4, 4], [4, 2]]]
+      }
+    }
+  ],
+  "controls": [
+    {
+      "id": "K_AB_eq_2",
+      "boundary_version": "BV-CONFLICT",
+      "districts": ["A", "B"],
+      "total": 2
+    },
+    {
+      "id": "K_BC_eq_1",
+      "boundary_version": "BV-CONFLICT",
+      "districts": ["B", "C"],
+      "total": 1
+    },
+    {
+      "id": "K_AC_eq_2",
+      "boundary_version": "BV-CONFLICT",
+      "districts": ["A", "C"],
+      "total": 2
+    }
+  ],
+  "review_note": "每个控制单独可行，任意两个控制同时满足也有完整见证；但三个交叉控制加“共3个参与地址”整体矛盾。"
+}

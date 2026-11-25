@@ -1,0 +1,561 @@
+{
+  "schema_version": "redistrict-result/1.0",
+  "tool_version": "1.0.0",
+  "status": "infeasible",
+  "version_binding": {
+    "schema_version": "redistrict-result/1.0",
+    "tool_version": "1.0.0",
+    "boundary_version": "BV-CONFLICT",
+    "input_sha256": "7d66b8daaaaa65a94e46e8db9a87c476941486e40c1dac27546489b01b5c4498",
+    "input_canonical_sha256": "8cfea1deea36cc6f26e574427e37e09ed3c057670409f79f10211c9da3eee403",
+    "geometry_sha256": "2931efcad5f2be596691ec7007deb965cace5115d303e8814b3786cb8009b630",
+    "controls_sha256": "1f0c460afe25fbef06a80d9d17566dc18d1c2f2bdc95e9d8069aabd0764e9159",
+    "published_sha256": null,
+    "original_publication_modified": false
+  },
+  "published_release": null,
+  "boundary_version": "BV-CONFLICT",
+  "district_ids": [
+    "A",
+    "B",
+    "C"
+  ],
+  "address_count_total": 3,
+  "eligible_address_count": 3,
+  "pending_review_count": 0,
+  "pending_review": [],
+  "address_candidates": [
+    {
+      "address_id": "X_AB",
+      "input_index": 0,
+      "location_kind": "Polygon",
+      "status": "eligible",
+      "candidate_source": "positive_area_intersection",
+      "candidate_districts": [
+        "A",
+        "B"
+      ],
+      "spatial_evidence": {
+        "intersection_areas": {
+          "A": 2.0,
+          "B": 2.0
+        },
+        "positive_area_epsilon": 1e-09,
+        "rule": "boundary-only/zero-area contact is not a candidate"
+      }
+    },
+    {
+      "address_id": "Y_BC",
+      "input_index": 1,
+      "location_kind": "Polygon",
+      "status": "eligible",
+      "candidate_source": "positive_area_intersection",
+      "candidate_districts": [
+        "B",
+        "C"
+      ],
+      "spatial_evidence": {
+        "intersection_areas": {
+          "B": 2.0,
+          "C": 2.0
+        },
+        "positive_area_epsilon": 1e-09,
+        "rule": "boundary-only/zero-area contact is not a candidate"
+      }
+    },
+    {
+      "address_id": "Z_AC",
+      "input_index": 2,
+      "location_kind": "Polygon",
+      "status": "eligible",
+      "candidate_source": "positive_area_intersection",
+      "candidate_districts": [
+        "A",
+        "C"
+      ],
+      "spatial_evidence": {
+        "intersection_areas": {
+          "A": 2.0,
+          "C": 2.0
+        },
+        "positive_area_epsilon": 1e-09,
+        "rule": "boundary-only/zero-area contact is not a candidate"
+      }
+    }
+  ],
+  "controls": [
+    {
+      "control_id": "K_AB_eq_2",
+      "boundary_version": "BV-CONFLICT",
+      "districts": [
+        "A",
+        "B"
+      ],
+      "total": 2
+    },
+    {
+      "control_id": "K_BC_eq_1",
+      "boundary_version": "BV-CONFLICT",
+      "districts": [
+        "B",
+        "C"
+      ],
+      "total": 1
+    },
+    {
+      "control_id": "K_AC_eq_2",
+      "boundary_version": "BV-CONFLICT",
+      "districts": [
+        "A",
+        "C"
+      ],
+      "total": 2
+    }
+  ],
+  "control_population_basis": "Each control.total is enforced on eligible participating addresses only. pending_review addresses are excluded from proven counts and witnesses.",
+  "ignored_controls_other_versions": [],
+  "naive_average_diagnostic": {
+    "status": "suppressed_because_global_controls_are_infeasible",
+    "warning": "No fractional apportionment is presented as a count when the global problem has no legal assignment."
+  },
+  "count_bounds": [],
+  "witnesses": [],
+  "determinations": [],
+  "restatement_differences": [],
+  "conflict": {
+    "reviewable": true,
+    "reason": "initial propagation conflict",
+    "solver_nodes_before_conflict": 0,
+    "minimal_control_core_ids": [
+      "K_AB_eq_2",
+      "K_BC_eq_1",
+      "K_AC_eq_2"
+    ],
+    "minimal_control_core": [
+      {
+        "control_id": "K_AB_eq_2",
+        "districts": [
+          "A",
+          "B"
+        ],
+        "total": 2
+      },
+      {
+        "control_id": "K_BC_eq_1",
+        "districts": [
+          "B",
+          "C"
+        ],
+        "total": 1
+      },
+      {
+        "control_id": "K_AC_eq_2",
+        "districts": [
+          "A",
+          "C"
+        ],
+        "total": 2
+      }
+    ],
+    "proper_subset_checks": [
+      {
+        "removed_control": "K_AB_eq_2",
+        "remaining_control_ids": [
+          "K_BC_eq_1",
+          "K_AC_eq_2"
+        ],
+        "feasible": true,
+        "nodes": 1,
+        "witness": {
+          "witness_id": "witness:core-minus-K_AB_eq_2",
+          "kind": "conflict_proper_subset",
+          "district_id": null,
+          "group_districts": null,
+          "value": null,
+          "assignment": {
+            "X_AB": "A",
+            "Y_BC": "B",
+            "Z_AC": "A"
+          },
+          "district_counts": {
+            "A": 2,
+            "B": 1,
+            "C": 0
+          },
+          "control_checks": [
+            {
+              "control_id": "K_BC_eq_1",
+              "expected": 1,
+              "observed": 1,
+              "satisfied": true
+            },
+            {
+              "control_id": "K_AC_eq_2",
+              "expected": 2,
+              "observed": 2,
+              "satisfied": true
+            }
+          ],
+          "verified": true
+        }
+      },
+      {
+        "removed_control": "K_BC_eq_1",
+        "remaining_control_ids": [
+          "K_AB_eq_2",
+          "K_AC_eq_2"
+        ],
+        "feasible": true,
+        "nodes": 2,
+        "witness": {
+          "witness_id": "witness:core-minus-K_BC_eq_1",
+          "kind": "conflict_proper_subset",
+          "district_id": null,
+          "group_districts": null,
+          "value": null,
+          "assignment": {
+            "X_AB": "A",
+            "Y_BC": "B",
+            "Z_AC": "C"
+          },
+          "district_counts": {
+            "A": 1,
+            "B": 1,
+            "C": 1
+          },
+          "control_checks": [
+            {
+              "control_id": "K_AB_eq_2",
+              "expected": 2,
+              "observed": 2,
+              "satisfied": true
+            },
+            {
+              "control_id": "K_AC_eq_2",
+              "expected": 2,
+              "observed": 2,
+              "satisfied": true
+            }
+          ],
+          "verified": true
+        }
+      },
+      {
+        "removed_control": "K_AC_eq_2",
+        "remaining_control_ids": [
+          "K_AB_eq_2",
+          "K_BC_eq_1"
+        ],
+        "feasible": true,
+        "nodes": 1,
+        "witness": {
+          "witness_id": "witness:core-minus-K_AC_eq_2",
+          "kind": "conflict_proper_subset",
+          "district_id": null,
+          "group_districts": null,
+          "value": null,
+          "assignment": {
+            "X_AB": "A",
+            "Y_BC": "C",
+            "Z_AC": "A"
+          },
+          "district_counts": {
+            "A": 2,
+            "B": 0,
+            "C": 1
+          },
+          "control_checks": [
+            {
+              "control_id": "K_AB_eq_2",
+              "expected": 2,
+              "observed": 2,
+              "satisfied": true
+            },
+            {
+              "control_id": "K_BC_eq_1",
+              "expected": 1,
+              "observed": 1,
+              "satisfied": true
+            }
+          ],
+          "verified": true
+        }
+      }
+    ],
+    "raw_assignment_enumeration": {
+      "complete": true,
+      "cartesian_candidate_combinations": 8,
+      "cases": [
+        {
+          "assignment": {
+            "X_AB": "A",
+            "Y_BC": "B",
+            "Z_AC": "A"
+          },
+          "satisfies_all_controls": false,
+          "control_checks": [
+            {
+              "control_id": "K_AB_eq_2",
+              "expected": 2,
+              "observed": 3,
+              "satisfied": false
+            },
+            {
+              "control_id": "K_BC_eq_1",
+              "expected": 1,
+              "observed": 1,
+              "satisfied": true
+            },
+            {
+              "control_id": "K_AC_eq_2",
+              "expected": 2,
+              "observed": 2,
+              "satisfied": true
+            }
+          ],
+          "district_counts": {
+            "A": 2,
+            "B": 1,
+            "C": 0
+          }
+        },
+        {
+          "assignment": {
+            "X_AB": "A",
+            "Y_BC": "B",
+            "Z_AC": "C"
+          },
+          "satisfies_all_controls": false,
+          "control_checks": [
+            {
+              "control_id": "K_AB_eq_2",
+              "expected": 2,
+              "observed": 2,
+              "satisfied": true
+            },
+            {
+              "control_id": "K_BC_eq_1",
+              "expected": 1,
+              "observed": 2,
+              "satisfied": false
+            },
+            {
+              "control_id": "K_AC_eq_2",
+              "expected": 2,
+              "observed": 2,
+              "satisfied": true
+            }
+          ],
+          "district_counts": {
+            "A": 1,
+            "B": 1,
+            "C": 1
+          }
+        },
+        {
+          "assignment": {
+            "X_AB": "A",
+            "Y_BC": "C",
+            "Z_AC": "A"
+          },
+          "satisfies_all_controls": false,
+          "control_checks": [
+            {
+              "control_id": "K_AB_eq_2",
+              "expected": 2,
+              "observed": 2,
+              "satisfied": true
+            },
+            {
+              "control_id": "K_BC_eq_1",
+              "expected": 1,
+              "observed": 1,
+              "satisfied": true
+            },
+            {
+              "control_id": "K_AC_eq_2",
+              "expected": 2,
+              "observed": 3,
+              "satisfied": false
+            }
+          ],
+          "district_counts": {
+            "A": 2,
+            "B": 0,
+            "C": 1
+          }
+        },
+        {
+          "assignment": {
+            "X_AB": "A",
+            "Y_BC": "C",
+            "Z_AC": "C"
+          },
+          "satisfies_all_controls": false,
+          "control_checks": [
+            {
+              "control_id": "K_AB_eq_2",
+              "expected": 2,
+              "observed": 1,
+              "satisfied": false
+            },
+            {
+              "control_id": "K_BC_eq_1",
+              "expected": 1,
+              "observed": 2,
+              "satisfied": false
+            },
+            {
+              "control_id": "K_AC_eq_2",
+              "expected": 2,
+              "observed": 3,
+              "satisfied": false
+            }
+          ],
+          "district_counts": {
+            "A": 1,
+            "B": 0,
+            "C": 2
+          }
+        },
+        {
+          "assignment": {
+            "X_AB": "B",
+            "Y_BC": "B",
+            "Z_AC": "A"
+          },
+          "satisfies_all_controls": false,
+          "control_checks": [
+            {
+              "control_id": "K_AB_eq_2",
+              "expected": 2,
+              "observed": 3,
+              "satisfied": false
+            },
+            {
+              "control_id": "K_BC_eq_1",
+              "expected": 1,
+              "observed": 2,
+              "satisfied": false
+            },
+            {
+              "control_id": "K_AC_eq_2",
+              "expected": 2,
+              "observed": 1,
+              "satisfied": false
+            }
+          ],
+          "district_counts": {
+            "A": 1,
+            "B": 2,
+            "C": 0
+          }
+        },
+        {
+          "assignment": {
+            "X_AB": "B",
+            "Y_BC": "B",
+            "Z_AC": "C"
+          },
+          "satisfies_all_controls": false,
+          "control_checks": [
+            {
+              "control_id": "K_AB_eq_2",
+              "expected": 2,
+              "observed": 2,
+              "satisfied": true
+            },
+            {
+              "control_id": "K_BC_eq_1",
+              "expected": 1,
+              "observed": 3,
+              "satisfied": false
+            },
+            {
+              "control_id": "K_AC_eq_2",
+              "expected": 2,
+              "observed": 1,
+              "satisfied": false
+            }
+          ],
+          "district_counts": {
+            "A": 0,
+            "B": 2,
+            "C": 1
+          }
+        },
+        {
+          "assignment": {
+            "X_AB": "B",
+            "Y_BC": "C",
+            "Z_AC": "A"
+          },
+          "satisfies_all_controls": false,
+          "control_checks": [
+            {
+              "control_id": "K_AB_eq_2",
+              "expected": 2,
+              "observed": 2,
+              "satisfied": true
+            },
+            {
+              "control_id": "K_BC_eq_1",
+              "expected": 1,
+              "observed": 2,
+              "satisfied": false
+            },
+            {
+              "control_id": "K_AC_eq_2",
+              "expected": 2,
+              "observed": 2,
+              "satisfied": true
+            }
+          ],
+          "district_counts": {
+            "A": 1,
+            "B": 1,
+            "C": 1
+          }
+        },
+        {
+          "assignment": {
+            "X_AB": "B",
+            "Y_BC": "C",
+            "Z_AC": "C"
+          },
+          "satisfies_all_controls": false,
+          "control_checks": [
+            {
+              "control_id": "K_AB_eq_2",
+              "expected": 2,
+              "observed": 1,
+              "satisfied": false
+            },
+            {
+              "control_id": "K_BC_eq_1",
+              "expected": 1,
+              "observed": 3,
+              "satisfied": false
+            },
+            {
+              "control_id": "K_AC_eq_2",
+              "expected": 2,
+              "observed": 2,
+              "satisfied": true
+            }
+          ],
+          "district_counts": {
+            "A": 0,
+            "B": 1,
+            "C": 2
+          }
+        }
+      ]
+    },
+    "verification": {
+      "command": "python3 -I /workspace/redistrict/cli.py verify --input <input.json> --result <result.json>",
+      "method": "Exact finite-domain search; raw Cartesian enumeration is included only when complete."
+    },
+    "no_proven_counts_emitted": true
+  }
+}

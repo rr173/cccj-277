@@ -1,0 +1,17 @@
+{
+  "schema_version": "redistrict-input/1.0",
+  "dataset_id": "invalid-overlap-rejected",
+  "boundary_version": "BV-BAD-OVERLAP",
+  "districts": [
+    {
+      "id": "A",
+      "geometry": {"type": "Polygon", "coordinates": [[[0, 0], [6, 0], [6, 6], [0, 6], [0, 0]]]}
+    },
+    {
+      "id": "B",
+      "geometry": {"type": "Polygon", "coordinates": [[[4, 4], [10, 4], [10, 10], [4, 10], [4, 4]]]}
+    }
+  ],
+  "addresses": [],
+  "controls": []
+}

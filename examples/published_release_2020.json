@@ -1,0 +1,15 @@
+{
+  "release_id": "PUB-2020-OLD",
+  "release_status": "original_published_immutable",
+  "published_at": "2021-01-20",
+  "boundary_version": "BV-2020",
+  "note": "示意性原发布版。重述程序只读取本文件；任何新结果写入 outputs/，不回写本文件。",
+  "district_counts": [
+    {"geo_id": "OLD_NORTH", "label": "旧北部片区", "published_count": 5},
+    {"geo_id": "OLD_SOUTH", "label": "旧南部片区", "published_count": 5}
+  ],
+  "comparison_figures": [
+    {"id": "PUB_A_2020", "comparable_new_district": "A", "published_count": 3},
+    {"id": "PUB_NORTH_AB", "comparable_new_districts": ["A", "B"], "published_count": 5}
+  ]
+}

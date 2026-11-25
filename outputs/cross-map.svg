@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="620" viewBox="0 0 860 620" role="img" aria-label="Candidate attribution map · boundary BV-2026.1">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="20" y="30" font-family="sans-serif" font-size="18" font-weight="700" fill="#0f172a">Candidate attribution map · boundary BV-2026.1</text>
+<polygon points="106.2,336.9 295.1,336.9 295.1,147.9 106.2,147.9 106.2,336.9" fill="#dbeafe" fill-opacity="0.72" stroke="#2563eb" stroke-width="2.2"/>
+<text x="200.6" y="242.4" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="800" fill="#2563eb">A</text>
+<polygon points="295.1,336.9 484.1,336.9 484.1,147.9 295.1,147.9 295.1,336.9" fill="#dcfce7" fill-opacity="0.72" stroke="#16a34a" stroke-width="2.2"/>
+<text x="389.6" y="242.4" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="800" fill="#16a34a">B</text>
+<polygon points="106.2,525.8 295.1,525.8 295.1,336.9 106.2,336.9 106.2,525.8" fill="#fef3c7" fill-opacity="0.72" stroke="#d97706" stroke-width="2.2"/>
+<text x="200.6" y="431.4" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="800" fill="#d97706">C</text>
+<polygon points="295.1,525.8 484.1,525.8 484.1,336.9 295.1,336.9 295.1,525.8" fill="#fae8ff" fill-opacity="0.72" stroke="#9333ea" stroke-width="2.2"/>
+<text x="389.6" y="431.4" text-anchor="middle" font-family="sans-serif" font-size="17" font-weight="800" fill="#9333ea">D</text>
+<polygon points="219.5,299.1 370.7,299.1 370.7,185.7 219.5,185.7 219.5,299.1" fill="#f97316" fill-opacity="0.22" stroke="#ea580c" stroke-width="2" stroke-dasharray="7 4"/>
+<text x="295.1" y="242.4" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#9a3412" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">U04</text>
+<polygon points="370.7,412.5 446.3,412.5 446.3,261.3 370.7,261.3 370.7,412.5" fill="#f97316" fill-opacity="0.22" stroke="#ea580c" stroke-width="2" stroke-dasharray="7 4"/>
+<text x="408.5" y="336.9" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#9a3412" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">U05</text>
+<polygon points="219.5,488.1 370.7,488.1 370.7,412.5 219.5,412.5 219.5,488.1" fill="#f97316" fill-opacity="0.22" stroke="#ea580c" stroke-width="2" stroke-dasharray="7 4"/>
+<text x="295.1" y="450.3" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#9a3412" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">U06</text>
+<polygon points="181.7,374.7 257.3,374.7 257.3,299.1 181.7,299.1 181.7,374.7" fill="#f97316" fill-opacity="0.22" stroke="#ea580c" stroke-width="2" stroke-dasharray="7 4"/>
+<text x="219.5" y="336.9" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="700" fill="#9a3412" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">U07</text>
+<circle cx="181.7" cy="223.5" r="5.4" fill="#7c3aed" stroke="#ffffff" stroke-width="2"/>
+<text x="189.7" y="216.5" font-family="sans-serif" font-size="12" font-weight="700" fill="#5b21b6" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">P01</text>
+<circle cx="181.7" cy="336.9" r="5.4" fill="#7c3aed" stroke="#ffffff" stroke-width="2"/>
+<text x="189.7" y="329.9" font-family="sans-serif" font-size="12" font-weight="700" fill="#5b21b6" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">P02</text>
+<circle cx="295.1" cy="450.3" r="5.4" fill="#7c3aed" stroke="#ffffff" stroke-width="2"/>
+<text x="303.1" y="443.3" font-family="sans-serif" font-size="12" font-weight="700" fill="#5b21b6" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">P03</text>
+<rect x="55.8" y="112.7" width="10" height="10" fill="#94a3b8" transform="rotate(45 60.8 117.7)"/>
+<text x="69.8" y="121.7" font-family="sans-serif" font-size="12" font-weight="700" fill="#475569" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">M09*</text>
+<circle cx="521.8" cy="110.2" r="5.4" fill="#7c3aed" stroke="#ffffff" stroke-width="2"/>
+<text x="529.8" y="103.2" font-family="sans-serif" font-size="12" font-weight="700" fill="#5b21b6" stroke="#ffffff" stroke-width="2.4" paint-order="stroke">P10</text>
+<rect x="34" y="581" width="13" height="13" fill="#7c3aed" fill-opacity="0.8" stroke="#334155" stroke-width="0.6"/>
+<text x="53" y="592" font-family="sans-serif" font-size="13" fill="#334155">point</text>
+<rect x="108" y="581" width="13" height="13" fill="#f97316" fill-opacity="0.8" stroke="#334155" stroke-width="0.6"/>
+<text x="127" y="592" font-family="sans-serif" font-size="13" fill="#334155">uncertain range</text>
+<rect x="262" y="581" width="13" height="13" fill="#93c5fd" fill-opacity="0.8" stroke="#334155" stroke-width="0.6"/>
+<text x="281" y="592" font-family="sans-serif" font-size="13" fill="#334155">new district</text>
+<rect x="392" y="581" width="13" height="13" fill="#94a3b8" fill-opacity="0.8" stroke="#334155" stroke-width="0.6"/>
+<text x="411" y="592" font-family="sans-serif" font-size="13" fill="#334155">pending marker*</text>
+</svg>
